@@ -203,7 +203,7 @@ HANDWRITTEN_TASKS = [
             'x': [[3], [4, 1, 2], [-1, 5, 0, -4, 2, 3, -2]],
         },
         outputs=[[27], [64, 1, 8], [-1, 125, 0, -64, 8, 27, -8]],
-        solution='Map(lambda u1: Multiply(u1, Square(u1)), x)',
+        solution='Map((lambda u1: Multiply(u1, Square(u1))), x)',
     ),
     Task(
         name='map:absolute_value',
@@ -215,7 +215,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[8, 4, 2, 3, 7, 6],
                  [23, 31, 12, 46, 78, 0, 32, 61, 48],
                  [98, 58, 43, 42, 68, 47, 15, 21, 74, 29]],
-        solution='Map(lambda u1: Max(u1, Subtract(0, u1)), x)',
+        solution='Map((lambda u1: Max(u1, Subtract(0, u1))), x)',
     ),
     Task(
         name='map:multiply_previous',
@@ -227,7 +227,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[30, 6, 12],
                  [20, 30, 2, 42, 42],
                  [6, 12, 30, 2, 0, 0, 20, 56, 42]],
-        solution='Map(lambda u1: Subtract(Square(u1), u1), x)',
+        solution='Map((lambda u1: Subtract(Square(u1), u1)), x)',
     ),
     Task(
         name='map:triangular',
@@ -239,7 +239,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[1, 3, 6, 10],
                  [0, 15, 3, 1, 21],
                  [28, 3, 15, 45, 3, 0, 10, 1, 6]],
-        solution='Map(lambda u1: IntDivide(Add(Square(u1), u1), 2), x)',
+        solution='Map((lambda u1: IntDivide(Add(Square(u1), u1), 2)), x)',
     ),
     Task(
         name='map:linear_equation',
@@ -253,7 +253,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[-17, -44, 73],
                  [9, 1, 17, -7, 5],
                  [31, -39, 38, 17, 45, -4, 10, 17, 24, 3]],
-        solution='Map(lambda u1: Add(Multiply(a, u1), b), x)',
+        solution='Map((lambda u1: Add(Multiply(a, u1), b)), x)',
     ),
     Task(
         name='map:linear_transform',
@@ -265,7 +265,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[56, -34, -4],
                  [8, 2, 5, -1, 11],
                  [17, 23, -22, 32, 29, 8, 14, 8]],
-        solution='Map(lambda u1: Subtract(Multiply(u1, 3), 4), x)',
+        solution='Map((lambda u1: Subtract(Multiply(u1, 3), 4)), x)',
     ),
     Task(
         name='map:quadratic_transform',
@@ -277,7 +277,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[15, 35, 3, 48],
                  [63, -1, 24, 0, 0, 15],
                  [35, 3, 99, 80, 143, 8, 63, 120, 48]],
-        solution='Map(lambda u1: Multiply(u1, Add(u1, 2)), x)',
+        solution='Map((lambda u1: Multiply(u1, Add(u1, 2))), x)',
     ),
     Task(
         name='map:clip',
@@ -291,7 +291,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[5, 0, 6, 9, 0, 7],
                  [53, 64, 52, 61, 52, 64, 57, 64],
                  [15, -4, -5, 14, 13, -5, -5, 15, -3, 15]],
-        solution='Map(lambda u1: Max(Min(u1, b), a), x)',
+        solution='Map((lambda u1: Max(Min(u1, b), a)), x)',
     ),
     Task(
         name='map:square_keep_sign',
@@ -303,7 +303,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[16, -36, 64, -49],
                  [-1, -16, 36, -25, 4],
                  [49, 81, -9, 16, -4, 0, -16, -64, 25, 1]],
-        solution='Map(lambda u1: Multiply(If(Less(u1, 0), -1, 1), Square(u1)), x)',
+        solution='Map((lambda u1: Multiply(If(Less(u1, 0), -1, 1), Square(u1))), x)',
     ),
     Task(
         name='map:sort_square',
@@ -311,7 +311,7 @@ HANDWRITTEN_TASKS = [
             'x': [[3, 4, 5], [2, 6, -3], [3, 1, -1, 6, 0, 3, 2, 7, -5]],
         },
         outputs=[[9, 16, 25], [4, 9, 36], [0, 1, 1, 4, 9, 9, 25, 36, 49]],
-        solution='Sort(Map(lambda u1: Square(u1), x))',
+        solution='Sort(Map((lambda u1: Square(u1)), x))',
     ),
     Task(
         name='map:zero_min',
@@ -323,7 +323,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[0, 4, 1, 6],
                  [6, 0, 15, 6, 73],
                  [1, 8, 6, 5, 0, 10]],
-        solution='Map(lambda u1: Subtract(u1, Minimum(x)), x)',
+        solution='Map((lambda u1: Subtract(u1, Minimum(x))), x)',
     ),
     Task(
         name='map:zero_element',
@@ -336,7 +336,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[4, 0, 5],
                  [-17, 32, -8, 0, 18],
                  [-3, 11, 5, 8, -4, 4, 7, 0, 3, 12]],
-        solution='Map(lambda u1: Subtract(u1, Access(i, x)), x)',
+        solution='Map((lambda u1: Subtract(u1, Access(i, x))), x)',
     ),
     Task(
         name='map:shift_first_to',
@@ -349,7 +349,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[2, -4, -1, 3, -2],
                  [10, 20, 17, 14, 24, 17, 15, 9],
                  [-5, -12, 0, 4, -10, -5, 8, -22, -20]],
-        solution='Map(lambda u1: Add(u1, Subtract(t, Head(x))), x)',
+        solution='Map((lambda u1: Add(u1, Subtract(t, Head(x)))), x)',
     ),
     Task(
         name='map:gather',
@@ -364,7 +364,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[4, 6, 2, 8],
                  [3, 7, 20, 3, -5, 3, 7, 3],
                  [4, 3, 4, 1, 3, 4, -5, 9]],
-        solution='Map(lambda u1: Access(u1, x), i)',
+        solution='Map((lambda u1: Access(u1, x)), i)',
     ),
     Task(
         name='map:max_selected',
@@ -381,7 +381,7 @@ HANDWRITTEN_TASKS = [
                   [7, 2, 1, 0, 8, 5, 2, 0, 1, 2]],
         },
         outputs=[6, 3, 59, 45, 41],
-        solution='Maximum(Map(lambda u1: Access(u1, x), i))',
+        solution='Maximum(Map((lambda u1: Access(u1, x)), i))',
     ),
     Task(
         name='map:zero_odds',
@@ -393,7 +393,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[4, 2, 0, 6, 0],
                  [0, 14, 0, 26, 24, 0],
                  [-42, 0, 0, 0, 34, 12, 0, -14, 0]],
-        solution='Map(lambda u1: If(IsOdd(u1), 0, u1), x)',
+        solution='Map((lambda u1: If(IsOdd(u1), 0, u1)), x)',
     ),
     Task(
         name='map:replace',
@@ -407,7 +407,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[7, 2, -1, 6, -1, 2, 5],
                  [-6, 7, 4, 3, -5, 7, 2, 1, 5],
                  [18, 48, 99, 26, 99, 99, 28, 17, 99, 33]],
-        solution='Map(lambda u1: If(Equal(u1, f), r, u1), x)',
+        solution='Map((lambda u1: If(Equal(u1, f), r, u1)), x)',
     ),
     Task(
         name='map:replace_negative',
@@ -420,7 +420,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[7, -9, 8, -9, -9, 2],
                  [5, 5, 2, 5, 14, 5, 2, 5, 5],
                  [13, 63, 99, 99, 32, 45, 99, 99, 12, 99]],
-        solution='Map(lambda u1: If(Less(u1, 0), y, u1), x)',
+        solution='Map((lambda u1: If(Less(u1, 0), y, u1)), x)',
     ),
     Task(
         name='map:spread_last',
@@ -432,7 +432,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[9, 7, 11, 8],
                  [-16, 8, -13, -21, -6],
                  [77, 59, 94, 57, 50, 99, 64]],
-        solution='Take(-1, Map(lambda u1: Add(u1, Last(x)), x))',
+        solution='Take(-1, Map((lambda u1: Add(u1, Last(x))), x))',
     ),
     Task(
         name='map:fill_first',
@@ -444,7 +444,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[3, 3, 3, 3, 3],
                  [-26, -26, -26, -26, -26, -26, -26],
                  [73, 73, 73, 73, 73, 73, 73, 73, 73, 73]],
-        solution='Map(lambda u1: Head(x), x)',
+        solution='Map((lambda u1: Head(x)), x)',
     ),
     Task(
         name='map:length',
@@ -456,7 +456,7 @@ HANDWRITTEN_TASKS = [
                   [-1, 3, 1, 2, 4, -2, 6, -4, -8, 3]],
         },
         outputs=[2, 7, 9, 1, 10],
-        solution='Sum(Map(lambda u1: 1, x))',
+        solution='Sum(Map((lambda u1: 1), x))',
     ),
     Task(
         name='map:median',
@@ -468,7 +468,7 @@ HANDWRITTEN_TASKS = [
                   [85, 48, -42, -15, -25, 23, -52]],
         },
         outputs=[5, 58, 32, 34, -15],
-        solution='Access(IntDivide(Sum(Map(lambda u1: 1, x)), 2), Sort(x))',
+        solution='Access(IntDivide(Sum(Map((lambda u1: 1), x)), 2), Sort(x))',
     ),
     Task(
         name='map:is_greater',
@@ -481,7 +481,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[1, 0, 0, 1, 1],
                  [1, 1, 0, 1, 1, 0, 0],
                  [0, 1, 1, 0, 1, 0, 0, 1, 0, 1]],
-        solution='Map(lambda u1: If(Greater(u1, y), 1, 0), x)',
+        solution='Map((lambda u1: If(Greater(u1, y), 1, 0)), x)',
     ),
     Task(
         name='map:divide_even',
@@ -493,7 +493,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[4, 5, 3, 7, 9],
                  [21, -15, 67, 0, -8, 23, 31, 14],
                  [31, 12, 34, -22, -25, -7, 1, 5, -10, 41]],
-        solution='Map(lambda u1: If(IsEven(u1), IntDivide(u1, 2), u1), x)',
+        solution='Map((lambda u1: If(IsEven(u1), IntDivide(u1, 2), u1)), x)',
     ),
     Task(
         name='map:multiply_odd',
@@ -506,7 +506,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[9, 3, 2, 15, 4, 21],
                  [30, 42, 28, 14, 66, 26, 42, 54, 18],
                  [-21, -22, 3, 28, -27, 51, -15, -39, -4, -33]],
-        solution='Map(lambda u1: If(IsOdd(u1), Multiply(u1, n), u1), x)',
+        solution='Map((lambda u1: If(IsOdd(u1), Multiply(u1, n), u1)), x)',
     ),
 
     # Tasks primarily using Filter.
@@ -520,7 +520,7 @@ HANDWRITTEN_TASKS = [
             'y': [2, 4, -3],
         },
         outputs=[[3, 4], [6, 5, 9], [25, 0, 79, -1, 31, 7, -2, 11]],
-        solution='Filter(lambda u1: Greater(u1, y), x)',
+        solution='Filter((lambda u1: Greater(u1, y)), x)',
     ),
     Task(
         name='filter:sort_even',
@@ -532,7 +532,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[0, 2, 6, 8],
                  [22, 26, 52, 64, 68],
                  [-24, -14, -12, 16, 28, 58]],
-        solution='Filter(lambda u1: IsEven(u1), Sort(x))',
+        solution='Filter((lambda u1: IsEven(u1)), Sort(x))',
     ),
     Task(
         name='filter:max_odd',
@@ -544,7 +544,7 @@ HANDWRITTEN_TASKS = [
                   [32, 25, 68, 43, 42, 44, 55, 37, 28, 29]],
         },
         outputs=[57, 13, 5, 43, 55],
-        solution='Maximum(Filter(lambda u1: IsOdd(u1), x))',
+        solution='Maximum(Filter((lambda u1: IsOdd(u1)), x))',
     ),
     Task(
         name='filter:odd_negative',
@@ -556,7 +556,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[-11, -3],
                  [-5, -7, -1],
                  [-17, -25, -31, -23, -7]],
-        solution='Filter(lambda u1: IsOdd(Min(u1, 0)), x)',
+        solution='Filter((lambda u1: IsOdd(Min(u1, 0))), x)',
     ),
     Task(
         name='filter:sum_positive',
@@ -568,7 +568,7 @@ HANDWRITTEN_TASKS = [
                   [-4, 8, 23, 15, 8, -31, -7, -9, -9, 24]],
         },
         outputs=[17, 90, 110, 65, 78],
-        solution='Sum(Filter(lambda u1: Greater(u1, 0), x))',
+        solution='Sum(Filter((lambda u1: Greater(u1, 0)), x))',
     ),
     Task(
         name='filter:negative_descending',
@@ -580,7 +580,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[-2, -4, -5, -9],
                  [-10, -11, -12, -13, -19],
                  [-19, -36, -38, -43, -44, -48]],
-        solution='Filter(lambda u1: Less(u1, 0), Reverse(Sort(x)))',
+        solution='Filter((lambda u1: Less(u1, 0)), Reverse(Sort(x)))',
     ),
     Task(
         name='filter:between',
@@ -594,7 +594,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[7, 6, 4, 5],
                  [73, 35, 70, 59, 16, 24],
                  [-12, 13, 19, 0, -19]],
-        solution='Filter(lambda u1: Less(u1, b), Filter(lambda u1: Greater(u1, a), x))',
+        solution='Filter((lambda u1: Less(u1, b)), Filter((lambda u1: Greater(u1, a)), x))',
     ),
     Task(
         name='filter:multiple',
@@ -607,7 +607,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[24, 16, 44],
                  [21, -35, 0, -14, 42],
                  [84, -57, 27, -39]],
-        solution='Filter(lambda u1: Equal(u1, Multiply(IntDivide(u1, n), n)), x)',
+        solution='Filter((lambda u1: Equal(u1, Multiply(IntDivide(u1, n), n))), x)',
     ),
     Task(
         name='filter:find_factors',
@@ -620,7 +620,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[5, 15, 3, 5, 1],
                  [4, 2, 7, 1],
                  [-5, -8, -4, 2, -1, 4, -10]],
-        solution='Filter(lambda u1: Equal(n, Multiply(IntDivide(n, u1), u1)), x)',
+        solution='Filter((lambda u1: Equal(n, Multiply(IntDivide(n, u1), u1))), x)',
     ),
     Task(
         name='filter:fixpoints',
@@ -632,7 +632,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[0, 3, 5, 5, 5, 6],
                  [1, 2, 5],
                  [0, 2, 3, 4, 6, 9, 9]],
-        solution='Sort(Filter(lambda u1: Equal(u1, Access(u1, x)), x))',
+        solution='Sort(Filter((lambda u1: Equal(u1, Access(u1, x))), x))',
     ),
     Task(
         name='filter:find_at',
@@ -648,7 +648,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[1, 4],
                  [1, 4, 6, 1, 4, 1],
                  [6, 3, 0, 9, 7]],
-        solution='Filter(lambda u1: Equal(Access(u1, x), y), i)',
+        solution='Filter((lambda u1: Equal(Access(u1, x), y)), i)',
     ),
 
     # Tasks primarily using Count.
@@ -664,7 +664,7 @@ HANDWRITTEN_TASKS = [
             'n': [7, 8, 7, 42, 42],
         },
         outputs=[2, 1, 4, 7, 6],
-        solution='Count(lambda u1: Equal(u1, n), x)',
+        solution='Count((lambda u1: Equal(u1, n)), x)',
     ),
     Task(
         name='count:rank',
@@ -677,7 +677,7 @@ HANDWRITTEN_TASKS = [
             'q': [44, 18, -3, 4, 4],
         },
         outputs=[4, 3, 5, 7, 6],
-        solution='Count(lambda u1: Less(u1, q), x)',
+        solution='Count((lambda u1: Less(u1, q)), x)',
     ),
     Task(
         name='count:num_under_first',
@@ -689,7 +689,7 @@ HANDWRITTEN_TASKS = [
                   [-11, 23, -48, -24, -11, -14, 44, 7, -26, -12]],
         },
         outputs=[3, 4, 6, 4, 5],
-        solution='Count(lambda u1: Less(u1, Head(x)), x)',
+        solution='Count((lambda u1: Less(u1, Head(x))), x)',
     ),
     Task(
         name='count:count_negative',
@@ -701,7 +701,7 @@ HANDWRITTEN_TASKS = [
                   [32, 42, -46, -97, 53, 34, 8, -9, 36, 20]],
         },
         outputs=[2, 5, 4, 6, 3],
-        solution='Count(lambda u1: Less(u1, 0), x)',
+        solution='Count((lambda u1: Less(u1, 0)), x)',
     ),
     Task(
         name='count:count_last',
@@ -713,7 +713,7 @@ HANDWRITTEN_TASKS = [
                   [-42, 0, -42, -42, -41, -43, -42, 42, -42, -42]],
         },
         outputs=[3, 2, 4, 1, 6],
-        solution='Count(lambda u1: Equal(u1, Last(x)), x)',
+        solution='Count((lambda u1: Equal(u1, Last(x))), x)',
     ),
     Task(
         name='count:count_at',
@@ -726,7 +726,7 @@ HANDWRITTEN_TASKS = [
             'i': [3, 6, 1, 7, 7]
         },
         outputs=[2, 4, 3, 1, 6],
-        solution='Count(lambda u1: Equal(u1, Access(i, x)), x)',
+        solution='Count((lambda u1: Equal(u1, Access(i, x))), x)',
     ),
     Task(
         name='count:even_or_positive',
@@ -738,7 +738,7 @@ HANDWRITTEN_TASKS = [
                   [-4, -7, -6, 3, 0, -9, -12, 4, 5, -3]],
         },
         outputs=[4, 5, 6, 3, 7],
-        solution='Count(lambda u1: IsEven(Min(u1, 0)), x)',
+        solution='Count((lambda u1: IsEven(Min(u1, 0))), x)',
     ),
     Task(
         name='count:total_zeros',
@@ -755,7 +755,7 @@ HANDWRITTEN_TASKS = [
                   [0, -54, 0, 14, 35, 0, 0]]
         },
         outputs=[3, 5, 6, 4, 11],
-        solution='Add(Count(lambda u1: Equal(u1, 0), x), Count(lambda u1: Equal(u1, 0), y))',
+        solution='Add(Count((lambda u1: Equal(u1, 0)), x), Count((lambda u1: Equal(u1, 0)), y))',
     ),
     Task(
         name='count:min_costs',
@@ -770,7 +770,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[2, 5, 6],
                  [5, 7, 10, 10],
                  [17, 25, 32, 43, 44, 61, 67]],
-        solution='Take(Count(lambda u1: Greater(u1, 0), r), Sort(c))',
+        solution='Take(Count((lambda u1: Greater(u1, 0)), r), Sort(c))',
     ),
 
     # Tasks primarily using ZipWith.
@@ -790,7 +790,7 @@ HANDWRITTEN_TASKS = [
                   [1, 4, 2, 11, 7, 5, 7, 4]],
         },
         outputs=[27, 97, 28, 24, 44],
-        solution='Maximum(ZipWith(lambda u1, u2: Add(Multiply(u1, 3), u2), w, t))',
+        solution='Maximum(ZipWith((lambda u1, u2: Add(Multiply(u1, 3), u2)), w, t))',
         original_solution='Maximum(ZipWith(lambda u1, u2: Add(u1, u2), Map(lambda u1: Multiply(u1, 3), w), t))',
     ),
     Task(
@@ -808,7 +808,7 @@ HANDWRITTEN_TASKS = [
                   [2, 9, 3, 11, 1, 5, 16, 15]],
         },
         outputs=[79, 35, 28, 101, 219],
-        solution='Sum(ZipWith(lambda u1, u2: Multiply(u1, u2), Sort(x), Reverse(Sort(y))))',
+        solution='Sum(ZipWith((lambda u1, u2: Multiply(u1, u2)), Sort(x), Reverse(Sort(y))))',
     ),
     Task(
         name='zipwith:deepcoder_5',
@@ -820,7 +820,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[3, 2, 5, 2, 3],
                  [12, 11, 15, 15, 11, 12],
                  [43, 3, 26, 1, 47, 47, 1, 26, 3, 43]],
-        solution='ZipWith(lambda u1, u2: Min(u1, u2), a, Reverse(a))',
+        solution='ZipWith((lambda u1, u2: Min(u1, u2)), a, Reverse(a))',
     ),
     Task(
         name='zipwith:deepcoder_6',
@@ -837,7 +837,7 @@ HANDWRITTEN_TASKS = [
                   [29, 23, 24, 7, 14, 12, 25]]
         },
         outputs=[1, 59, 32, 19, 30],
-        solution='Subtract(Minimum(ZipWith(lambda u1, u2: Add(u1, u2), t, p)), 2)',
+        solution='Subtract(Minimum(ZipWith((lambda u1, u2: Add(u1, u2)), t, p)), 2)',
         original_solution='Minimum(ZipWith(lambda u1, u2: Add(u1, u2), Map(lambda u1: Subtract(u1, 1), t), Map(lambda u1: Subtract(u1, 1), p)))',
     ),
     Task(
@@ -850,7 +850,7 @@ HANDWRITTEN_TASKS = [
                   [4, 5, 8, 9, 10, 11, 12, 15, 17, 18]],
         },
         outputs=[9, 31, 93, 32, 37],
-        solution='Sum(ZipWith(lambda u1, u2: Max(Subtract(u1, u2), 0), Reverse(s), s))',
+        solution='Sum(ZipWith((lambda u1, u2: Max(Subtract(u1, u2), 0)), Reverse(s), s))',
         original_solution='Sum(Filter(lambda u1: Greater(u1, 0), ZipWith(lambda u1, u2: Subtract(u1, u2), Reverse(s), s)))',
     ),
     Task(
@@ -868,7 +868,7 @@ HANDWRITTEN_TASKS = [
                   [2, 1, 0, 2, 0, 6, 2, 1, 3, 2]],
         },
         outputs=[20, 16, 19, -14, 21],
-        solution='Sum(ZipWith(lambda u1, u2: Multiply(u1, u2), x, y))',
+        solution='Sum(ZipWith((lambda u1, u2: Multiply(u1, u2)), x, y))',
     ),
     Task(
         name='zipwith:average',
@@ -877,7 +877,7 @@ HANDWRITTEN_TASKS = [
             'y': [[2, 4], [4, 1, 7], [3, 6, -3, -11, 19, -6]],
         },
         outputs=[[5, 2], [8, 2, 7], [-1, 5, 0, -9, 15, -3]],
-        solution='ZipWith(lambda u1, u2: IntDivide(Add(u1, u2), 2), x, y)',
+        solution='ZipWith((lambda u1, u2: IntDivide(Add(u1, u2), 2)), x, y)',
     ),
     Task(
         name='zipwith:three_sum',
@@ -887,7 +887,7 @@ HANDWRITTEN_TASKS = [
             'c': [[0, 0], [3, 0, -3], [0, 1, 8, 0, 6]],
         },
         outputs=[[8, 10], [11, -3, 4], [12, 7, 9, 7, 10]],
-        solution='ZipWith(lambda u1, u2: Add(u1, u2), a, ZipWith(lambda u1, u2: Add(u1, u2), b, c))',
+        solution='ZipWith((lambda u1, u2: Add(u1, u2)), a, ZipWith((lambda u1, u2: Add(u1, u2)), b, c))',
     ),
     Task(
         name='zipwith:sort_divide',
@@ -902,7 +902,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[2, 8, 9],
                  [4, 9, 13, 20],
                  [1, 3, 4, 5, 6, 7, 7, 15, 17]],
-        solution='Sort(ZipWith(lambda u1, u2: IntDivide(u1, u2), m, n))',
+        solution='Sort(ZipWith((lambda u1, u2: IntDivide(u1, u2)), m, n))',
     ),
     Task(
         name='zipwith:pair_differences',
@@ -914,7 +914,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[27, 21],
                  [-21, 10, 35, -12],
                  [40, -76, -10, 63, -64, 47, -21, 31]],
-        solution='ZipWith(lambda u1, u2: Subtract(u2, u1), x, Drop(1, x))',
+        solution='ZipWith((lambda u1, u2: Subtract(u2, u1)), x, Drop(1, x))',
     ),
     Task(
         name='zipwith:sum_mask',
@@ -931,7 +931,7 @@ HANDWRITTEN_TASKS = [
                   [1, 0, 0, 1, 0, 1, 1, 0, 0]],
         },
         outputs=[15, 21, 31, -20, -12],
-        solution='Sum(ZipWith(lambda u1, u2: Multiply(u1, u2), x, m))',
+        solution='Sum(ZipWith((lambda u1, u2: Multiply(u1, u2)), x, m))',
     ),
     Task(
         name='zipwith:distance',
@@ -946,7 +946,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[2, 5, 4, 3, 4],
                  [9, 3, 17, 4, 19, 2, 3, 11],
                  [48, 18, 31, 42, 37, 18, 29, 6, 10]],
-        solution='ZipWith(lambda u1, u2: Max(Subtract(u1, u2), Subtract(u2, u1)), x, y)',
+        solution='ZipWith((lambda u1, u2: Max(Subtract(u1, u2), Subtract(u2, u1))), x, y)',
     ),
     Task(
         name='zipwith:squared_distance',
@@ -963,7 +963,7 @@ HANDWRITTEN_TASKS = [
                   [-1, -2, 1, 4, 7]],
         },
         outputs=[81, 45, 21, 58, 158],
-        solution='Sum(ZipWith(lambda u1, u2: Square(Subtract(u1, u2)), x, y))',
+        solution='Sum(ZipWith((lambda u1, u2: Square(Subtract(u1, u2))), x, y))',
     ),
     Task(
         name='zipwith:is_equal',
@@ -978,7 +978,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[1, 0, 1, 1, 0],
                  [1, 1, 0, 0, 1, 1],
                  [0, 0, 1, 1, 0, 1, 0, 1, 0]],
-        solution='ZipWith(lambda u1, u2: If(Equal(u1, u2), 1, 0), x, y)',
+        solution='ZipWith((lambda u1, u2: If(Equal(u1, u2), 1, 0)), x, y)',
     ),
     Task(
         name='zipwith:sorted_min',
@@ -993,7 +993,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[1, 4, 6, 7],
                  [-8, -6, -6, 0, 2, 7],
                  [0, 7, 12, 18, 19, 20, 23, 26, 28]],
-        solution='ZipWith(lambda u1, u2: Min(u1, u2), Sort(x), Sort(y))',
+        solution='ZipWith((lambda u1, u2: Min(u1, u2)), Sort(x), Sort(y))',
     ),
     Task(
         name='zipwith:add_outer_triples',
@@ -1005,7 +1005,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[9, 10, 7],
                  [10, 5, 12],
                  [-9, 13, -19]],
-        solution='ZipWith(lambda u1, u2: Add(u1, u2), x, Reverse(Take(3, Reverse(x))))',
+        solution='ZipWith((lambda u1, u2: Add(u1, u2)), x, Reverse(Take(3, Reverse(x))))',
     ),
     Task(
         name='zipwith:max_mirror_product',
@@ -1017,7 +1017,7 @@ HANDWRITTEN_TASKS = [
                   [1, 0, 3, 1, 2, 4, 0, 4, 2, 1]],
         },
         outputs=[18, 10, 25, -9, 12],
-        solution='Maximum(ZipWith(lambda u1, u2: Multiply(u1, u2), x, Reverse(x)))',
+        solution='Maximum(ZipWith((lambda u1, u2: Multiply(u1, u2)), x, Reverse(x)))',
     ),
     Task(
         name='zipwith:double_or_nothing',
@@ -1032,7 +1032,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[10, 12, 0, 4, 0],
                  [0, 30, 0, 0, 50, 0, 10],
                  [44, 0, 0, 94, 0, 48, 28, 0, 0, 26]],
-        solution='ZipWith(lambda u1, u2: Multiply(u1, Add(1, u2)), p, w)',
+        solution='ZipWith((lambda u1, u2: Multiply(u1, Add(1, u2))), p, w)',
     ),
 
     # Tasks primarily using Scanl1.
@@ -1047,7 +1047,7 @@ HANDWRITTEN_TASKS = [
                   [10, 8, 9, 9, 6, 8, 10, 5, 2, 7]],
         },
         outputs=[5, 6, 10, 14, 13],
-        solution='Subtract(Sum(h), Sum(Scanl1(lambda u1, u2: Min(u1, u2), h)))',
+        solution='Subtract(Sum(h), Sum(Scanl1((lambda u1, u2: Min(u1, u2)), h)))',
         original_solution='Sum(Filter(lambda u1: Greater(u1, 0), ZipWith(lambda u1, u2: Subtract(u1, u2), h, Scanl1(lambda u1, u2: Min(u1, u2), h))))',
     ),
     Task(
@@ -1060,7 +1060,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[1, 6, 6, 20],
                  [4, 4, 6, 6, 6, 7, 7, 9],
                  [-6, -5, -2, 0, 0, 3, 3, 3, 5, 5]],
-        solution='Scanl1(lambda u1, u2: Max(u1, u2), x)',
+        solution='Scanl1((lambda u1, u2: Max(u1, u2)), x)',
     ),
     Task(
         name='scanl1:max_running_sum',
@@ -1072,7 +1072,7 @@ HANDWRITTEN_TASKS = [
                   [4, -2, 3, -5, -1, 2, -4, 17, -3, 2]],
         },
         outputs=[10, 11, 6, 5, 14],
-        solution='Maximum(Scanl1(lambda u1, u2: Add(u1, u2), x))',
+        solution='Maximum(Scanl1((lambda u1, u2: Add(u1, u2)), x))',
     ),
     Task(
         name='scanl1:running_sum_reverse',
@@ -1084,7 +1084,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[5, 9, 16],
                  [2, 10, 16, 17, 20],
                  [2, 7, -1, -4, -4, 5, 18, 14]],
-        solution='Scanl1(lambda u1, u2: Add(u1, u2), Reverse(x))',
+        solution='Scanl1((lambda u1, u2: Add(u1, u2)), Reverse(x))',
     ),
     Task(
         name='scanl1:running_sum_restart',
@@ -1096,7 +1096,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[3, 8, 0, 4, 6],
                  [6, 0, 4, 11, 14, 0, 1, 0, 4, 9],
                  [-6, -3, 5, 1, 0, -3, -4, 0, 8, 3]],
-        solution='Scanl1(lambda u1, u2: If(Equal(u2, 0), 0, Add(u1, u2)), x)',
+        solution='Scanl1((lambda u1, u2: If(Equal(u2, 0), 0, Add(u1, u2))), x)',
     ),
     Task(
         name='scanl1:running_sum_extra',
@@ -1109,7 +1109,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[3, 6, 13, 18],
                  [-6, 1, 2, 8, 19, 19, 13],
                  [12, -11, 2, 7, 0, 8, 17, 10, -20, -14]],
-        solution='Scanl1(lambda u1, u2: Add(Add(u1, u2), n), x)',
+        solution='Scanl1((lambda u1, u2: Add(Add(u1, u2), n)), x)',
     ),
     Task(
         name='scanl1:decay',
@@ -1121,7 +1121,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[7, 5, 8, 5, 7],
                  [10, 19, 17, 11, 17, 14, 9, 11],
                  [15, 19, 36, 57, 40, 31, 40, 20, 10, 8]],
-        solution='Scanl1(lambda u1, u2: Add(IntDivide(u1, 2), u2), x)',
+        solution='Scanl1((lambda u1, u2: Add(IntDivide(u1, 2), u2)), x)',
     ),
     Task(
         name='scanl1:prefix_running_product',
@@ -1134,7 +1134,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[2, 2, 10, 20],
                  [1, 3, 6, 6, 24],
                  [5, -5, 10, 10, -30, -60, 60, -180]],
-        solution='Scanl1(lambda u1, u2: Multiply(u1, u2), Take(n, x))',
+        solution='Scanl1((lambda u1, u2: Multiply(u1, u2)), Take(n, x))',
     ),
     Task(
         name='scanl1:product',
@@ -1146,7 +1146,7 @@ HANDWRITTEN_TASKS = [
                   [-2, 1, 2, 2, -3, -1, 3, -1]],
         },
         outputs=[90, 48, 120, -60, 72],
-        solution='Last(Scanl1(lambda u1, u2: Multiply(u1, u2), x))',
+        solution='Last(Scanl1((lambda u1, u2: Multiply(u1, u2)), x))',
     ),
     Task(
         name='scanl1:running_min_no_ends',
@@ -1158,7 +1158,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[7, 5, 5, 3, 3],
                  [6, 6, 5, 4, 4, 2],
                  [57, 45, 45, 43, -28, -28, -30, -43]],
-        solution='Scanl1(lambda u1, u2: Min(u1, u2), Take(-1, Drop(1, x)))',
+        solution='Scanl1((lambda u1, u2: Min(u1, u2)), Take(-1, Drop(1, x)))',
     ),
     Task(
         name='scanl1:alternate_signs',
@@ -1170,7 +1170,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[3, -1, 5, -7, 3, -4],
                  [-5, 3, -6, 3, -2, 9, -4, 8, -5, 3],
                  [50, -28, 68, -56, 43, -21, 12, -48, 87, -57]],
-        solution='Scanl1(lambda u1, u2: If(Greater(Multiply(u1, u2), 0), Subtract(0, u2), u2), x)',
+        solution='Scanl1((lambda u1, u2: If(Greater(Multiply(u1, u2), 0), Subtract(0, u2), u2)), x)',
     ),
     Task(
         name='scanl1:follow_cycle',
@@ -1182,7 +1182,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[4, 1, 0, 4, 1],
                  [3, 1, 5, 4, 6, 2, 0],
                  [8, 3, 5, 0, 8, 3, 5, 0, 8, 3]],
-        solution='Scanl1(lambda u1, u2: Access(u1, x), x)',
+        solution='Scanl1((lambda u1, u2: Access(u1, x)), x)',
     ),
     Task(
         name='scanl1:make_strictly_increasing',
@@ -1194,7 +1194,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[2, 4, 5, 7, 8, 9],
                  [-5, -4, -3, 1, 2, 5, 6, 7],
                  [-40, -23, -22, -9, 0, 4, 5, 6, 18, 19]],
-        solution='Scanl1(lambda u1, u2: Max(Add(u1, 1), u2), x)',
+        solution='Scanl1((lambda u1, u2: Max(Add(u1, 1), u2)), x)',
     ),
     Task(
         name='scanl1:closest_to_zero',
@@ -1206,7 +1206,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[7, -5, -5, 4, 4, -2, -1],
                  [-6, 5, 5, -4, -4, -4, 3, 0, 0],
                  [57, 54, -37, -37, -33, -33, 21, -20, -14, -14]],
-        solution='Scanl1(lambda u1, u2: If(Less(Square(u1), Square(u2)), u1, u2), x)',
+        solution='Scanl1((lambda u1, u2: If(Less(Square(u1), Square(u2)), u1, u2)), x)',
     ),
 
     # Tasks using a combination of higher-order functions.
@@ -1226,7 +1226,7 @@ HANDWRITTEN_TASKS = [
                   [38, 62, 17, 44, 23, 10, 28, 47, 78, 37]],
         },
         outputs=[4, 5, 6, 8, 5],
-        solution='Count(lambda u1: Greater(u1, 0), ZipWith(lambda u1, u2: Subtract(u1, u2), a, b))',
+        solution='Count((lambda u1: Greater(u1, 0)), ZipWith((lambda u1, u2: Subtract(u1, u2)), a, b))',
     ),
     Task(
         name='multi:deepcoder_7',
@@ -1243,7 +1243,7 @@ HANDWRITTEN_TASKS = [
                   [1, 2, 1, 1, 3, 1, 1, 2, 1]],
         },
         outputs=[62, 59, 98, 149, 173],
-        solution='Sum(ZipWith(lambda u1, u2: Multiply(u1, u2), s, Scanl1(lambda u1, u2: Add(u1, u2), p)))',
+        solution='Sum(ZipWith((lambda u1, u2: Multiply(u1, u2)), s, Scanl1((lambda u1, u2: Add(u1, u2)), p)))',
     ),
     Task(
         name='multi:range_like',
@@ -1255,7 +1255,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[0, 1, 2],
                  [0, 1, 2, 3, 4, 5, 6],
                  [0, 1, 2, 3, 4, 5, 6, 7, 8]],
-        solution='Scanl1(lambda u1, u2: Add(u1, 1), Map(lambda u1: 0, x))',
+        solution='Scanl1((lambda u1, u2: Add(u1, 1)), Map((lambda u1: 0), x))',
     ),
     Task(
         name='multi:find_odd_products',
@@ -1267,7 +1267,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[35, 21],
                  [-9, -33, 77, -49],
                  [55, 91, 39, 15, 35]],
-        solution='Filter(lambda u1: IsOdd(u1), ZipWith(lambda u1, u2: Multiply(u2, u1), x, Drop(1, x)))',
+        solution='Filter((lambda u1: IsOdd(u1)), ZipWith((lambda u1, u2: Multiply(u2, u1)), x, Drop(1, x)))',
     ),
     Task(
         name='multi:multiply_odds',
@@ -1279,7 +1279,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[3, 15, 15],
                  [5, 5, 15, 45, 45],
                  [3, -3, 9, 81, -81]],
-        solution='Scanl1(lambda u1, u2: Multiply(u1, u2), Filter(lambda u1: IsOdd(u1), x))',
+        solution='Scanl1((lambda u1, u2: Multiply(u1, u2)), Filter((lambda u1: IsOdd(u1)), x))',
     ),
     Task(
         name='multi:running_total',
@@ -1294,7 +1294,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[10, 19, 24, 32],
                  [17, 14, 25, 22, 31, 29, 30, 23, 29],
                  [-29, -51, 6, -9, -77, -16, -23, 51, 23, 34]],
-        solution='Scanl1(lambda u1, u2: Add(u1, u2), ZipWith(lambda u1, u2: Add(u1, u2), x, y))',
+        solution='Scanl1((lambda u1, u2: Add(u1, u2)), ZipWith((lambda u1, u2: Add(u1, u2)), x, y))',
     ),
     Task(
         name='multi:add_from_index',
@@ -1312,7 +1312,7 @@ HANDWRITTEN_TASKS = [
         outputs=[[11, 16, 12],
                  [16, 18, 13, 10, 4],
                  [9, 29, 23, 4, -4, -16, -17, 16, 14]],
-        solution='ZipWith(lambda u1, u2: Add(u1, u2), x, Map(lambda u1: Access(u1, y), i))',
+        solution='ZipWith((lambda u1, u2: Add(u1, u2)), x, Map((lambda u1: Access(u1, y)), i))',
     ),
     Task(
         name='multi:positive_differences',
@@ -1327,9 +1327,368 @@ HANDWRITTEN_TASKS = [
         outputs=[[5, 4, 0, 1],
                  [9, 1, 16, 0, 5],
                  [44, 28, 14, 45, 2, 15]],
-        solution='Filter(lambda u1: Greater(u1, -1), ZipWith(lambda u1, u2: Subtract(u1, u2), x, y))',
-    ),
+        solution='Filter((lambda u1: Greater(u1, -1)), ZipWith((lambda u1, u2: Subtract(u1, u2)), x, y))',
+    )
 ]
+
+    # NEW CHATGPT TASKs
+    ######################################################
+"""Task(
+        name='filter_count_positive',
+        inputs_dict={
+            'x': [[-1, 2, 3, -4, 5],
+                [0, -2, -3, 7, 8],
+                [1, -1, 1, -1, 1],
+                [10, 20, -30, 40, 50]],
+        },
+        outputs=[3,2,3,4],
+        solution='Count((lambda u1: Greater(u1, 0)), x)',
+    ),
+    Task(
+        name='sum_even_numbers',
+        inputs_dict={
+            'x': [[1, 2, 3, 4, 5],
+                [10, 15, 20, 25],
+                [2, 4, 6, 8, 10],
+                [5, 7, 9]],
+        },
+        outputs = [6, 30, 30, 0],
+        solution='Sum(Filter((lambda u1: IsEven(u1)), x))',
+    ),
+    Task(
+        name='average_unique_elements',
+        inputs_dict={
+            'x': [[1, 2, 2, 3, 4],
+                [5, 5, 5, 5, 5],
+                [10, 20, 30, 40, 50],
+                [-1, -2, -2, -3, -1]],
+        },
+        outputs=[2, 5, 30, -2],
+        solution='IntDivide(Sum(Sort(x)), Count((lambda u1: True), Sort(x)))',
+    ), 
+    Task(
+        name='maximum_difference',
+        inputs_dict={
+            'x': [[10, 3, 5, 6],
+                [1, 2, 3, 4, 5],
+                [5, 17, 2, 8],
+                [7, 7, 7, 7]],
+        },
+        outputs=[7, 4, 15, 0],
+        solution='Subtract(Maximum(x), Minimum(x))',
+    ),
+    Task(
+        name='count_negative_numbers',
+        inputs_dict={
+            'x': [[-4, -3, -2, 1, 2, 3],
+                [0, -1, -5, 6, -7],
+                [-1, -1, -1, -1, -1],
+                [1, 2, 3, 4, 5]],
+        },
+        outputs=[3, 3, 5, 0],
+        solution='Count((lambda u1: Less(u1, 0)), x)',
+    ),
+    Task(
+        name='increment_all_elements',
+        inputs_dict={
+            'x': [[1, 2, 3],
+                [-1, 0, 1, 2],
+                [5, 6, 7]],
+        },
+        outputs=[[2, 3, 4],
+                [0, 1, 2, 3],
+                [6, 7, 8]],
+        solution='Map((lambda u1: Add(u1, 1)), x)',
+    ),
+    Task(
+        name='double_even_numbers',
+        inputs_dict={
+            'x': [[1, 2, 3, 4],
+                [2, 3, 4, 5, 6],
+                [10, 15, 20, 25]],
+        },
+        outputs=[[1, 4, 3, 8],
+                [4, 3, 8, 5, 12],
+                [20, 15, 40, 25]],
+        solution='Map((lambda u1: If(IsEven(u1), Multiply(u1, 2), u1)), x)',
+    ),
+    Task(
+        name='filter_negatives_and_square',
+        inputs_dict={
+            'x': [[-1, 2, -3, 4],
+                [0, -2, 3, -4, 5],
+                [-10, 5, -30, 5]],
+        },
+        outputs=[[4, 16],
+                [0, 9, 25],
+                [25, 25]],
+        solution='Map((lambda u1: Square(u1)), Filter((lambda u1: Greater(u1, -1)), x))',
+    ),
+    Task(
+        name='sum_squares_positive',
+        inputs_dict={
+            'x': [[-1, 2, 3],
+                [4, -5, 6],
+                [-7, 8, -9]],
+        },
+        outputs=[13, 52, 64],
+        solution='Sum(Map((lambda u1: Square(u1)), Filter((lambda u1: Greater(u1, 0)), x)))',
+    ),
+    Task(
+        name='max_square_positive',
+        inputs_dict={
+            'x': [[-10, 2, 3],
+                [4, -5, 6],
+                [-8, 9, -10]],
+        },
+        outputs=[9, 36, 81],
+        solution='Maximum(Map((lambda u1: Square(u1)), Filter((lambda u1: Greater(u1, 0)), x)))',
+    ),
+    Task(
+        name='sum_even_after_adding_one',
+        inputs_dict={
+            'x': [[1, 3, 5],
+                [2, 4, 6],
+                [7, 8, 10]],
+        },
+        outputs=[12, 0, 8],
+        solution='Sum(Filter((lambda u1: IsEven(u1)), Map((lambda u1: Add(u1, 1)), x)))',
+    ),
+    Task(
+        name='avg_positive_after_squaring',
+        inputs_dict={
+            'x': [[-1, 2, 3],
+                [4, -5, 6],
+                [0, 8, -9]],
+        },
+        outputs=[6, 26, 64],
+        solution='IntDivide(Sum(Map((lambda u1: Square(u1)), Filter((lambda u1: Greater(u1, 0)), x))), Count((lambda u1: Greater(u1, 0)), x))',
+    ),
+    Task(
+        name='min_square_negative',
+        inputs_dict={
+            'x': [[-10, 2, -3],
+                [-4, 5, -6],
+                [-8, -9, 10]],
+        },
+        outputs=[9, 16, 64],
+        solution='Minimum(Map((lambda u1: Square(u1)), Filter((lambda u1: Less(u1, 0)), x)))',
+    ),
+    Task(
+        name='sum_absolute_values',
+        inputs_dict={
+            'x': [[-1, 2, -3],
+                [4, -5, 6],
+                [-7, 8, -9]],
+        },
+        outputs=[2, 10, 8],
+        solution='Sum(Map((lambda u1: If(Greater(u1, 0), u1, 0)), x))',
+    ),
+    Task(
+        name='filter_even_multiply_by_2',
+        inputs_dict={
+            'x': [[1, 2, 3, 4],
+                [5, 6, 7, 8],
+                [9, 10, 11, 12]],
+        },
+        outputs=[[4, 8],
+                [12, 16],
+                [20, 24]],
+        solution='Map((lambda u1: Multiply(u1, 2)), Filter((lambda u1: IsEven(u1)), x))',
+    ),
+    Task(
+        name='count_zeros',
+        inputs_dict={
+            'x': [[0, 1, 0, 2],
+                [3, 0, 4, 0],
+                [5, 6, 7]],
+        },
+        outputs=[2, 2, 0],
+        solution='Count((lambda u1: Equal(u1, 0)), x)',
+    ),
+    Task(
+        name='double_odd_numbers',
+        inputs_dict={
+            'x': [[1, 2, 3, 4],
+                [5, 6, 7, 8],
+                [9, 10, 11, 12]],
+        },
+        outputs=[[2, 2, 6, 4],
+                [10, 6, 14, 8],
+                [18, 10, 22, 12]],
+        solution='Map((lambda u1: If(IsOdd(u1), Multiply(u1, 2), u1)), x)',
+    ),
+    Task(
+        name='square_even_numbers',
+        inputs_dict={
+            'x': [[1, 2, 3, 4],
+                [5, 6, 7, 8],
+                [9, 10, 11, 12]],
+        },
+        outputs=[[1, 4, 3, 16],
+                [5, 36, 7, 64],
+                [9, 100, 11, 144]],
+        solution='Map((lambda u1: If(IsEven(u1), Square(u1), u1)), x)',
+    ),
+    Task(
+        name='negate_negative_numbers',
+        inputs_dict={
+            'x': [[-1, 2, -3, 4],
+                [-5, -6, 7, 8],
+                [9, -10, 11, -12]],
+        },
+        outputs=[[1, 2, 3, 4],
+                [5, 6, 7, 8],
+                [9, 10, 11, 12]],
+        solution='Map((lambda u1: If(Greater(u1, 0), u1, Multiply(u1, -1))), x)',
+    ),
+    Task(
+        name='append_number_to_all',
+        inputs_dict={
+            'x': [[1, 2, 3],
+                [4, 5],
+                [6, 7, 8]],
+            'n': [9, 9 ,9],
+        },
+        outputs=[[10, 11, 12],
+                [13, 14],
+                [15, 16, 17]],
+        solution='Map((lambda u1: Add(u1, n)), x)',
+    ),
+    Task(
+        name='increment_and_square',
+        inputs_dict={
+            'x': [[1, 2, 3],
+                [4, 5],
+                [6, 7, 8]],
+        },
+        outputs=[[4, 9, 16],
+                [25, 36],
+                [49, 64, 81]],
+        solution='Map((lambda u1: Square(Add(u1, 1))), x)',
+    ),
+    Task(
+        name='filter_positive_and_double',
+        inputs_dict={
+            'x': [[-1, 2, 3, -4],
+                [0, 5, -6, 7],
+                [8, -9, 10, -11]],
+        },
+        outputs=[[4, 6],
+                [10, 14],
+                [16, 20]],
+        solution='Map((lambda u1: Multiply(u1, 2)), Filter((lambda u1: Greater(u1, 0)), x))',
+    ),
+    Task(
+        name='square_negative_numbers_only',
+        inputs_dict={
+            'x': [[-2, 3, -4, 5],
+                [-6, -7, 8, 9],
+                [-10, 11, -12, 13]],
+        },
+        outputs=[[4, 3, 16, 5],
+                [36, 49, 8, 9],
+                [100, 11, 144, 13]],
+        solution='Map((lambda u1: If(Less(u1, 0), Square(u1), u1)), x)',
+    ),
+    Task(
+        name='increment_if_even',
+        inputs_dict={
+            'x': [[1, 2, 3, 4],
+                [5, 6, 7, 8],
+                [9, 10, 11, 12]],
+        },
+        outputs=[[1, 3, 3, 5],
+                [5, 7, 7, 9],
+                [9, 11, 11, 13]],
+        solution='Map((lambda u1: If(IsEven(u1), Add(u1, 1), u1)), x)',
+    ),
+    Task(
+        name='negate_even_numbers',
+        inputs_dict={
+            'x': [[1, 2, 3, 4],
+                [5, 6, 7, 8],
+                [9, 10, 11, 12]],
+        },
+        outputs=[[1, -2, 3, -4],
+                [5, -6, 7, -8],
+                [9, -10, 11, -12]],
+        solution='Map((lambda u1: If(IsEven(u1), Subtract(0, u1), u1)), x)',
+    ),
+    Task(
+        name='triple_odd_numbers',
+        inputs_dict={
+            'x': [[1, 2, 3, 4],
+                [5, 6, 7, 8],
+                [9, 10, 11, 12]],
+        },
+        outputs=[[3, 2, 9, 4],
+                [15, 6, 21, 8],
+                [27, 10, 33, 12]],
+        solution='Map((lambda u1: If(IsOdd(u1), Multiply(u1, 3), u1)), x)',
+    ),
+    Task(
+        name='sum_of_even_numbers',
+        inputs_dict={
+            'x': [[1, 2, 3, 4],
+                [5, 6, 7, 8, 9]],
+        },
+        outputs=[6, 14],
+        solution="Sum(Filter((lambda u1: IsEven(u1)), x))",
+    ),
+    Task(
+        name='maximum_even_number',
+        inputs_dict={
+            'x': [[1, 3, 5, 8],
+                [2, 4, 6, 7, 9]],
+        },
+        outputs=[8, 6],
+        solution="Maximum(Filter((lambda u1: IsEven(u1)), x))",
+    ),
+    Task(
+        name='count_odd_numbers',
+        inputs_dict={
+            'x': [[1, 2, 3, 4],
+                [5, 6, 7, 8, 9]],
+        },
+        outputs=[2, 3],
+        solution="Count((lambda u1: IsOdd(u1)), x)",
+    ), 
+    Task(
+        name='first_three_squared',
+        inputs_dict={
+            'x': [[2, 3, 4, 13],
+                [1, 3, 6, 17, 18]],
+        },
+        outputs=[[4, 9, 16],
+                [1, 9, 36]],
+        solution="Map((lambda u1: Square(u1)), Take(3, x))",
+    ),
+    Task(
+        name='subtract_minimum_from_all',
+        inputs_dict={
+            'x': [[2, 4, 6, 8],
+                [1, 3, 5, 7, 9]],
+        },
+        outputs=[[0, 2, 4, 6],
+                [0, 2, 4, 6, 8]],
+        solution='Map((lambda u1: Subtract(u1, Minimum(x))), x)',
+    ),
+    Task(
+        name='double_if_greater_than_five',
+        inputs_dict={
+            'x': [[3, 5, 6, 8],
+                [1, 4, 5, 7, 9]],
+        },
+        outputs=[[3, 5, 12, 16],
+                [1, 4, 5, 14, 18]],
+        solution='Map((lambda u1: If(Greater(u1, 5), Multiply(u1, 2), u1)), x)',
+    )
+"""
+
+
+
+
 
 SYNTHETIC_TASKS = [
     Task(

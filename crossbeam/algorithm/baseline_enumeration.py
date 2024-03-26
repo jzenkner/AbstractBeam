@@ -121,8 +121,8 @@ def synthesize_baseline(task, domain, max_weight=10, timeout=5,
                         skip_probability=0, lambda_skip_probability=0,
                         shuffle_ops=False):
   """Synthesizes a solution using normal bottom-up enumerative search."""
+
   gc.collect()
-  print('synthesize_baseline for task: {}'.format(task))
   start_time = timeit.default_timer()
   end_time = start_time + timeout if timeout else None
   stats = {
@@ -168,6 +168,9 @@ def synthesize_baseline(task, domain, max_weight=10, timeout=5,
   if shuffle_ops:
     random.shuffle(operations)
 
+  # operations which name included fn_ should be in front of the "operations" list
+  operations = sorted(operations, key=lambda x: x.name.startswith('fn_'), reverse=True)
+
   output_value = value_module.OutputValue(task.outputs)
   if output_value in value_set:
     # Found solution!
@@ -212,7 +215,7 @@ def synthesize_baseline(task, domain, max_weight=10, timeout=5,
               num_free_vars + num_bound_variables, gather_values_cache))
 
         for arg_list in itertools.product(*arg_options_list):
-
+          #print(timeit.default_timer())
           if (end_time is not None and timeit.default_timer() > end_time) or (
               max_values_explored is not None and
               stats['num_values_explored'] >= max_values_explored):
@@ -239,8 +242,9 @@ def synthesize_baseline(task, domain, max_weight=10, timeout=5,
               continue
 
             value = op.apply(arg_list, arg_vars, free_vars)
-            update_stats_value_explored(stats, value)
 
+            update_stats_value_explored(stats, value)
+            
             if value is None:
               continue
             if value.num_free_variables == 0:
@@ -257,15 +261,9 @@ def synthesize_baseline(task, domain, max_weight=10, timeout=5,
               if not io_pairs_per_example:
                 # The lambda never ran successfully, so let's skip it.
                 continue
-
+            
             values_by_weight[target_weight][value] = value
             value_set.add(value)
             assert value.get_weight() == target_weight
             update_stats_value_kept(stats, value)
-
-    print('Bottom-up enumeration found {} distinct tasks of weight {}, or {} '
-          'distinct tasks total, in {:.2f} seconds total'.format(
-              len(values_by_weight[target_weight]), target_weight,
-              len(value_set), timeit.default_timer() - start_time))
-
   return None, value_set, values_by_weight, stats

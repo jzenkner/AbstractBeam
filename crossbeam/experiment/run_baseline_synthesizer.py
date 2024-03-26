@@ -19,7 +19,6 @@ import timeit
 from absl import app
 from absl import flags
 import numpy as np
-
 from crossbeam.algorithm import baseline_enumeration
 from crossbeam.datasets import data_gen
 from crossbeam.dsl import domains
@@ -109,8 +108,10 @@ def main(argv):
                                       num_tasks=FLAGS.num_eval_tasks,
                                       min_weight=FLAGS.min_task_weight,
                                       max_weight=FLAGS.max_task_weight,
-                                      num_examples=FLAGS.num_examples,
-                                      num_inputs=FLAGS.num_inputs,
+                                      min_num_examples= FLAGS.min_num_examples,
+                                      max_num_examples= FLAGS.max_num_examples,
+                                      min_num_inputs= FLAGS.min_num_inputs,
+                                      max_num_inputs = FLAGS.max_num_inputs,
                                       verbose=FLAGS.verbose)
 
   run_synthesis(domain=domain,

@@ -14,18 +14,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-data_dir=$HOME/xlambda-data/deepcoder
+data_dir=/work/ldierkes/repos/ma-lukas-dierkes/ec/LambdaBeam
 
 tout=3600  # 1 hour.
 maxw=15  # Run until timeout.
 maxne=5
-maxni=3
+maxni=1
 skip=0.0
 lambdaskip=0.0
 lambda_fraction=0.8
 shuffle_ops=False
-num_proc=1
-out_dir=$data_dir/t-${tout}-maxne-${maxne}-maxni-${maxni}-skip-${skip}-lambdaskip-${lambdaskip}-lambdafrac-${lambda_fraction}-shuffleops-${shuffle_ops}
+num_proc=90
+out_dir=$data_dir/t-${tout}-maxne-${maxne}-maxni-${maxni}-skip-${skip}-lambdaskip-${lambdaskip}-lambdafrac-${lambda_fraction}-shuffleops-${shuffle_ops}-now
 
 if [ ! -e $out_dir ];
 then

@@ -2,22 +2,38 @@ import collections
 import glob
 import multiprocessing
 import os
-import pickle5 as cp
+import pickle as cp
 
 from crossbeam.data.deepcoder import deepcoder_tasks
 from crossbeam.dsl import deepcoder_utils
+import random
+import json
+from crossbeam.dsl import task as task_module
 
 NUM_PROCESSES = 14
-DATA_DIR = '/home/kshi/xlambda-data/deepcoder/t-3600-maxne-5-maxni-3-skip-0.00-lambdaskip-0.00-lambdafrac-0.80'
-NEW_DATA_DIR = '/home/kshi/xlambda-data/deepcoder/t-3600-maxne-5-maxni-3-skip-0.00-lambdaskip-0.00-lambdafrac-0.80/filtered_train_data/'
+DATA_DIR = '/work/ldierkes/repos/ma-lukas-dierkes/ec/LambdaBeam/t-3600-maxne-5-maxni-1-skip-0.0-lambdaskip-0.0-lambdafrac-0.8-shuffleops-False-now'
+NEW_DATA_DIR = '/work/ldierkes/repos/ma-lukas-dierkes/ec/LambdaBeam/t-3600-maxne-5-maxni-1-skip-0.0-lambdaskip-0.0-lambdafrac-0.8-shuffleops-False-now/filtered_training/'
 
 
 def task_type_signature(task):
   return (tuple(type(v[0]) for v in task.inputs_dict.values()),
           type(task.outputs[0]))
 
+def get_dreamcoder_eval_tasks():
+    Task = task_module.Task
+    with open("/work/ldierkes/repos/ma-lukas-dierkes/ec/data/list_tasks+bootstrap.json", 'r') as file:
+        data = json.load(file) 
+    data = [task for task in data if task["type"]["input"] == task["type"]["output"] == "list-of-int"]
+    names = [task["name"] for task in data]
+    inputs = [{"x1": [task["examples"][i]["i"] for i in range(len(task["examples"]))]} for task in data]
+    outputs = [[task["examples"][i]["o"] for i in range(len(task["examples"]))] for task in data]
+    eval_tasks = [Task(name = name, inputs_dict=inputs[i], outputs = outputs[i], solution=None) for i, name in enumerate(names)]
+    random.shuffle(eval_tasks)
+    print("Len eval task when loaded")
+    print(len(eval_tasks))
+    return eval_tasks
 
-TEST_TASKS = deepcoder_tasks.HANDWRITTEN_TASKS + deepcoder_tasks.SYNTHETIC_TASKS
+TEST_TASKS = get_dreamcoder_eval_tasks()
 TEST_TASKS_BY_TYPE_SIGNATURE = collections.defaultdict(list)
 for task in TEST_TASKS:
   type_signature = task_type_signature(task)
@@ -62,7 +78,7 @@ def process_shard(shard):
 
 
 def process_all_shards():
-  shards = sorted(glob.glob(os.path.join(DATA_DIR, 'train-tasks-*.pkl')))
+  shards = sorted(glob.glob(os.path.join(DATA_DIR, 'train-weight*.pkl')))
   with multiprocessing.Pool(processes=NUM_PROCESSES) as pool:
     num_tasks_per_shard = pool.map(process_shard, shards)
     print(f'The filtered data has {sum(num_tasks_per_shard)} tasks in total.')

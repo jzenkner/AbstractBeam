@@ -19,7 +19,7 @@ class TrainTaskGen(object):
         for task in list_tasks:
           yield task
 
-  def datagen(self, seed, probs_of_weights):
+  def datagen(self, seed, probs_of_weights, domain):
     if self.taskgen:
       while True:
         yield [self.taskgen() for _ in range(self.local_batch_size)]
@@ -45,19 +45,22 @@ class TrainTaskGen(object):
     while True:
       batch_tasks = []
       for _ in range(self.local_batch_size):
-        weight_idx = np.argmax(rng.multinomial(1, probs))
+        try:
+          weight_idx = np.argmax(rng.multinomial(1, probs))
+        except:
+          continue
         weight = keys[weight_idx]
         batch_tasks.append(next(dict_datagen[weight]))
       yield batch_tasks
 
 
 class EvalTaskGen(TrainTaskGen):
-  def __init__(self, num_local_eval, weighted_files):
-    super().__init__(weighted_files, 1, None)
+  def __init__(self, num_local_eval, weighted_files, fn_taskgen = None):
+    super().__init__(weighted_files, 1, fn_taskgen)
     self.num_local_eval = num_local_eval
 
-  def datagen(self, seed, probs_of_weights):
-    generator = super().datagen(seed, probs_of_weights)
+  def datagen(self, seed, probs_of_weights, domain):
+    generator = super().datagen(seed, probs_of_weights, domain)
     for _ in range(self.num_local_eval):
       yield next(generator)[0]
 

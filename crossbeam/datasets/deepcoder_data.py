@@ -2,6 +2,8 @@
 
 import itertools
 import random
+from collections import Counter
+
 
 # Ranges have inclusive endpoints and are paired with sampling weights.
 INT_RANGES = [
@@ -61,19 +63,39 @@ def flip(true_probability=0.5):
   return random.random() < true_probability
 
 
-def random_int(input_format):
+def random_int(input_format, dreamcoder_train_tasks= None):
   min_int, max_int = input_format['int_range']
   return random.randint(min_int, max_int)
 
 
-def random_int_list(input_format):
+def random_int_list(input_format, dreamcoder_train_tasks = None):
   """Samples a random int list according to some list settings."""
-  min_length, max_length = input_format['length_range']
-  list_length = random.randint(min_length, max_length)
+  if dreamcoder_train_tasks:
+    # Extract 'x1' values from the inputs of dreamcoder_train_tasks
+    inputs = [input.inputs_dict['x1'] for input in dreamcoder_train_tasks if type(input.inputs_dict["x1"][0]) == list]
+    # Flatten the list
+    inputs = [item for sublist in inputs for item in sublist]
+    # Count the lengths of inputs
+    length_distribution = Counter([len(input) for input in inputs if type(input) == list])
+    # Flatten the list again
+    inputs = [item for sublist in inputs for item in sublist]
+    # Count the occurrences of each element
+    integer_distribution = Counter(inputs)
+    # Calculate the maximum of 1 and a random value
+    # sample according to length_distribution
+    list_length = max(1, random.choices(list(length_distribution.keys()), weights = length_distribution.values(), k = 1)[0])
+
+
+  else:
+    min_length, max_length = input_format['length_range']
+    list_length = random.randint(min_length, max_length)
 
   min_int, max_int = input_format['int_range']
   element_range = range(min_int, max_int + 1)
-  if input_format['unique'] and max_length <= len(element_range):
+
+  if dreamcoder_train_tasks:
+    the_list = random.choices(list(integer_distribution.keys()), weights = integer_distribution.values(), k = list_length)
+  elif input_format['unique'] and max_length <= len(element_range):
     the_list = random.sample(element_range, k=list_length)
   else:
     the_list = random.choices(element_range, k=list_length)
@@ -88,7 +110,7 @@ def random_int_list(input_format):
   return the_list
 
 
-def deepcoder_inputs_dict_generator(num_inputs, num_examples):
+def deepcoder_inputs_dict_generator(num_inputs, num_examples, dreamcoder_train_tasks = None):
   """Returns a dict of random inputs for DeepCoder."""
   while True:  # Try until there are no identical inputs or examples.
     inputs_dict = {}
@@ -98,7 +120,10 @@ def deepcoder_inputs_dict_generator(num_inputs, num_examples):
 
     for i in range(num_inputs):
       input_name = f'x{i + 1}'
-      input_type = random.choice(['int', 'int_list', 'int_list'])
+      if dreamcoder_train_tasks:
+        input_type = "int_list" #random.choice(['int', 'int_list', 'int_list'])
+      else:
+        input_type = random.choice(['int', 'int_list', 'int_list'])
 
       copy_list_lengths_index = -1
 
@@ -140,9 +165,9 @@ def deepcoder_inputs_dict_generator(num_inputs, num_examples):
           specific_len_input_format = input_format.copy()
           list_len = len(other_list)
           specific_len_input_format['length_range'] = (list_len, list_len)
-          input_examples.append(input_creator_fn(specific_len_input_format))
+          input_examples.append(input_creator_fn(specific_len_input_format, dreamcoder_train_tasks))
       else:
-        input_examples = [input_creator_fn(input_format)
+        input_examples = [input_creator_fn(input_format, dreamcoder_train_tasks)
                           for _ in range(num_examples)]
       inputs_dict[input_name] = input_examples
 

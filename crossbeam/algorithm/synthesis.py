@@ -14,7 +14,7 @@
 
 import copy
 import timeit
-
+import pickle
 import numpy as np
 import torch
 
@@ -176,7 +176,6 @@ def synthesize(*args, **kwargs):
   timeout = kwargs.get('timeout')
   restarts_timeout = kwargs.pop('restarts_timeout', None)
   max_values_explored = kwargs.get('max_values_explored')
-
   if not restarts_timeout:
     return synthesize_single_restart(*args, **kwargs)
 
@@ -187,11 +186,18 @@ def synthesize(*args, **kwargs):
                       else timeit.default_timer() + timeout)
   total_num_values_explored = 0
   total_num_restarts = 0
-
+  if restarts_timeout is not None:
+    first_run = True
+  else:
+    first_run = False
   while True:
+    
+    kwargs["use_ur_in_valid"] = True
     kwargs['timeout'] = restarts_timeout
+    kwargs["first_run"] = first_run
     synthesis_result = synthesize_single_restart(*args, **kwargs)
     result_value, (all_values, all_signatures), stats = synthesis_result
+
     total_num_values_explored += stats['num_values_explored']
     total_num_restarts += 1
     stats['total_num_values_explored'] = total_num_values_explored
@@ -204,16 +210,20 @@ def synthesize(*args, **kwargs):
     if overall_end_time is not None and timeit.default_timer() > overall_end_time:
       # Overall timeout.
       return synthesis_result
-
+    first_run = False
 
 def synthesize_single_restart(
     task, domain, model, device,
     trace=None, max_weight=15, k=2, is_training=False,
     timeout=None, max_values_explored=None, is_stochastic=False,
     random_beam=False, use_ur=False, masking=True,
-    static_weight=False, temperature=1.0):
+    static_weight=False, temperature=1.0, inventions = None, use_ur_in_valid=False, used_invs = None, first_run = False):
   """Perform CrossBeam synthesis."""
-
+  if not is_training and use_ur_in_valid:
+    use_ur = True
+    #print("use_ur", use_ur)
+  if first_run:
+    use_ur = False
   stats = {
       'num_examples': task.num_examples,
       'num_inputs': task.num_inputs,
@@ -229,7 +239,6 @@ def synthesize_single_restart(
   verbose = False
   end_time = (None if timeout is None or timeout < 0
               else timeit.default_timer() + timeout)
-
   # We can use at most 1 of:
   #   * random_beam (sampling during search)
   #   * is_stochastic (sampling during evaluation)
@@ -276,9 +285,18 @@ def synthesize_single_restart(
     last_num_values_before_operation_loop = len(all_values)
 
     # Loop over all operations.
-    for operation in domain.operations:
-
-      if verbose:
+    operations = []
+    if used_invs is not None:
+      for op in domain.operations :
+          if "fn" in str(op):
+              if str(op) in used_invs:
+                  operations.append(op)
+          else:
+              operations.append(op)
+    else:
+      operations = domain.operations
+    for operation in operations: # domain.operations:
+      if verbose: # verbose
         print('Operation: {}'.format(operation))
 
       # Type checking.
@@ -288,6 +306,7 @@ def synthesize_single_restart(
                                 vidx_start=type_masks[0][1].shape[0])
         if not feasible:
           # We don't have appropriately-typed values needed for the operation.
+          print(f'Skipping operation {operation.program} because no values of the right type ')
           continue
 
       # Info about search context before we do beam search, used to create
@@ -296,6 +315,7 @@ def synthesize_single_restart(
       num_values_before_op = len(all_values)
       collect_training_data_for_this_operation = (
           is_training and trace and trace[0].operation == operation)
+
 
       # Get argument lists via beam search, random sampling, or
       # UniqueRandomizer, by using a generator.
@@ -348,6 +368,7 @@ def synthesize_single_restart(
           value_embed = model.encode_weight(val_base_embed, weight_snapshot)
           op_state = model.init(io_embed, value_embed, operation)
           # Perform beam search.
+
           beam = beam_search(operation.arity, k,
                              all_values,
                              value_embed,
@@ -394,6 +415,9 @@ def synthesize_single_restart(
         # Create the new value.
         arg_list, arg_vars, free_vars = decode_args(operation, args_and_vars,
                                                     all_values)
+        if len(arg_list) == 0:
+          print("Error, no args")
+          continue
         result_value = operation.apply(arg_list, arg_vars, free_vars)
         update_stats_value_explored(stats, result_value)
 
@@ -417,9 +441,13 @@ def synthesize_single_restart(
         update_stats_value_kept(stats, result_value)
 
         # Check if we found a solution.
-        if result_value == output_value and not is_training:
-          return result_value, (all_values, all_signatures), stats
-
+  
+        #print("result_value", result_value)
+        #print("output_value", output_value)
+        if result_value == output_value:
+          if not is_training:
+            return result_value, (all_values, all_signatures), stats
+      
         # Search for the next trace element.
         # TODO(hadai): allow multi-choice when options in trace have the same
         # priority. one easy fix would to include this into trace_generation

@@ -71,7 +71,6 @@ def solution_weight(solution: str) -> int:
   # or `v2` variables) or long-form (with those variables), and syntactically
   # correct. It might not detect cases where the solution has syntax errors.
   long_form = re.search(r'v\d', solution)
-
   operation_names = {op.name for op in deepcoder_operations.get_operations()}
   for c in ['(', ')', ',', ':']:
     solution = solution.replace(c, f' {c} ')
@@ -95,7 +94,7 @@ def solution_weight(solution: str) -> int:
           if tokens[op_index] == 'lambda':
             # Jump past this inner lambda.
             op_index = _end_index(tokens, op_index)
-          elif tokens[op_index] in operation_names:
+          elif tokens[op_index] in operation_names or "fn" in tokens[op_index] or tokens[op_index] == "empty":
             # Count the number of distinct `u` variables inside this operation.
             distinct_vars = set()
             inner_index = op_index + 1
@@ -118,7 +117,7 @@ def solution_weight(solution: str) -> int:
         re.fullmatch(r'-?\d', token) or
         # An operation counts 1, and any additional weight was already covered
         # in the lambda case.
-        token in operation_names or
+        token in operation_names or "fn" in token or token == "empty" or
         # A variable like `u1`, used as bound variables in lambdas.
         re.fullmatch(r'u\d', token) or
         # A single-letter variable like `x`, used as inputs in handwritten

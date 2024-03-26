@@ -16,6 +16,7 @@ from random import sample
 from crossbeam.dsl import value
 from crossbeam.dsl.value import Value
 import torch
+import copy
 import torch.nn as nn
 from torch.autograd import Variable
 from torch.nn.parameter import Parameter
@@ -115,6 +116,43 @@ class OpPoolingState(nn.Module):
     self.pool_method = pool_method
     self.op_specific_mod = nn.ModuleList([PoolingState(self.state_dim, pool_method) for _ in range(len(self.ops))])
     self.op_idx_map = {repr(op): i for i, op in enumerate(self.ops)}
+ 
+  def add_invention(self, invention, outer_op, func_for_args, device, initialization_method):
+    self.ops = tuple(list(self.ops) + [invention.name])
+    
+    if initialization_method == "top" and outer_op is not None:
+      module = copy.deepcopy(self.op_specific_mod[self.op_idx_map[outer_op]])
+      # module = PoolingState(self.state_dim, self.pool_method)
+      self.op_specific_mod.append(module.to(device))
+    elif initialization_method == "average" or initialization_method == "top_and_avg":
+      modules = []
+      for func in func_for_args:
+        modules.append(copy.deepcopy(self.op_specific_mod[self.op_idx_map[func]]).to(device))
+      
+      if initialization_method == "top_and_avg" and outer_op is not None:
+        modules.append(copy.deepcopy(self.op_specific_mod[self.op_idx_map[outer_op]]).to(device))
+      
+      if len(modules) == 0:
+        self.op_specific_mod.append(PoolingState(self.state_dim, self.pool_method).to(device))
+      elif len(modules) == 1:
+        self.op_specific_mod.append(modules[0])
+      else:
+        # Code here:
+        new_model = copy.deepcopy(modules[0]).to(device)
+        new_model_state_dict = new_model.state_dict()
+        for module in modules[1:]:
+          current_module_state_dict = module.state_dict()
+          for key in new_model_state_dict:
+            new_model_state_dict[key] = (new_model_state_dict[key] + current_module_state_dict[key]) / 2
+
+        new_model.load_state_dict(new_model_state_dict)
+        self.op_specific_mod.append(new_model.to(device))
+
+    else:
+      self.op_specific_mod.append(PoolingState(self.state_dim, self.pool_method).to(device))
+
+    self.op_idx_map[invention.name.split("(")[0]] = len(self.ops) - 1
+
 
   def forward(self, io_embed, value_embed, op, value_mask=None):
     mod = self.op_specific_mod[self.op_idx_map[repr(op)]]

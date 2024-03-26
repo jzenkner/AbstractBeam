@@ -1,0 +1,56 @@
+def get_function_dict():
+    function_dict = {
+        "Add": 2,
+        "Subtract": 2,
+        "Multiply": 2,
+        "Greater": 2,
+        "Equal": 2,
+        "If": 3,
+        "Fold": 3,
+        #"Fold_int": 3,
+        "Map": 2,
+        "IsEmpty": 1,
+        "Cons": 2,
+        "Car": 1,
+        "Cdr": 1,
+        "IsSquare": 1,
+        "IsPrime": 1,
+        "Length": 1,
+        "Index": 2,
+        "Mod": 2,
+    }
+    return function_dict
+
+
+def get_lambdabeam_function_dict():
+    function_dict = {
+        "Add": 2,
+        "Subtract": 2,
+        "Multiply": 2,
+        "IntDivide": 2,
+        "Square": 1,
+        "Min": 2,
+        "Max": 2,
+        "Greater": 2,
+        "Less": 2,
+        "Equal": 2,
+        "IsEven": 1,
+        "IsOdd": 1,
+        "If": 3,
+        "Head": 1,
+        "Last": 1,
+        "Take": 2,
+        "Drop": 2,
+        "Access": 2,
+        "Minimum": 1,
+        "Maximum": 1,
+        "Reverse": 1,
+        "Sort": 1,
+        "Sum": 1,
+        "Map": 2,
+        "Filter": 2,
+        "Count": 2,
+        "ZipWith": 3,
+        "Scanl1": 2,
+    }
+    return function_dict

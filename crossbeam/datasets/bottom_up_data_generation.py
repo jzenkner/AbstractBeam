@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """Generates training data using a bottom-up synthesizer."""
-
+import signal
 import collections
 import functools
 import multiprocessing
@@ -21,33 +21,34 @@ import os
 import pickle as cp
 import random
 import timeit
+import math
 
 from absl import app
 from absl import flags
 from tqdm import tqdm
-
+import time
 from crossbeam.algorithm import baseline_enumeration
 from crossbeam.datasets import data_gen_flags
 from crossbeam.dsl import domains
 from crossbeam.dsl import task as task_module
 from crossbeam.experiment import exp_common
-
+from concurrent.futures import TimeoutError
 FLAGS = flags.FLAGS
+from concurrent.futures import TimeoutError
 
 
 def perform_search(domain, min_weight, max_weight, num_examples, num_inputs,
                    timeout, num_tasks_per_weight, skip_probability=0,
                    lambda_skip_probability=0, lambda_fraction=None,
-                   shuffle_ops=False):
+                   shuffle_ops=False, dreamcoder_train_tasks = None):
   """Generates training data by running bottom-up synthesizer."""
   inputs_dict = domain.inputs_dict_generator(num_inputs=num_inputs,
-                                             num_examples=num_examples)
+                                             num_examples=num_examples, dreamcoder_train_tasks = dreamcoder_train_tasks)
   # Make some dummy outputs. Note that they shouldn't have overlaps with the
   # inputs, or with each other, so that we don't extract unwanted constants.
-  assert num_examples <= 5
-  dummy_outputs = ['~', '&', '=', '^', '*'][:num_examples]
+  # assert num_examples <= 5
+  dummy_outputs = ['~', '&', '=', '^', '*', ",", "s", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n"][:num_examples]
   task = task_module.Task(inputs_dict, dummy_outputs)
-
   start_time = timeit.default_timer()
   _, _, values_by_weight, _ = baseline_enumeration.synthesize_baseline(
       task, domain, max_weight=max_weight, timeout=timeout,
@@ -55,12 +56,11 @@ def perform_search(domain, min_weight, max_weight, num_examples, num_inputs,
       lambda_skip_probability=lambda_skip_probability,
       shuffle_ops=shuffle_ops)
   elapsed_time = timeit.default_timer() - start_time
-
   largest_weight = max(i for i in range(min_weight, max_weight + 1)
                        if values_by_weight[i])
   max_weight = largest_weight
-  print(f'Enumerated programs up to size {largest_weight} in '
-        f'{elapsed_time:.2f} seconds.')
+  #print(f'Enumerated programs up to size {largest_weight} in '
+  #      f'{elapsed_time:.2f} seconds.')
 
   if shuffle_ops and elapsed_time > timeout:
     # If timeout, we didn't finish enumerating the largest weight. We want to
@@ -73,17 +73,16 @@ def perform_search(domain, min_weight, max_weight, num_examples, num_inputs,
       # We didn't finish enumerating non-lambdas. Throw out everything with the
       # largest weight.
       max_weight = largest_weight - 1
-    print('Reached timeout. Enumerated programs up to size', max_weight)
+    #print('Reached timeout. Enumerated programs up to size', max_weight)
 
-  print(f'Considering programs between size {min_weight} and {max_weight} '
-        f'inclusive.')
+  #print(f'Considering programs between size {min_weight} and {max_weight} '
+  #      f'inclusive.')
 
   output_types = (domain.output_type if isinstance(domain.output_type,
                                                    (list, tuple))
                   else [domain.output_type])
 
   tasks_by_weight = {}
-
   for weight in range(min_weight, max_weight + 1):
     choices = []
     for v in values_by_weight[weight]:
@@ -92,7 +91,7 @@ def perform_search(domain, min_weight, max_weight, num_examples, num_inputs,
           all(input_name in expression for input_name in inputs_dict)):
         choices.append(v)
     num_choices = len(choices)
-    print(f'Found {num_choices} choices for weight {weight}.')
+    #print(f'Found {num_choices} choices for weight {weight}.')
     random.shuffle(choices)
 
     if lambda_fraction is not None:
@@ -103,8 +102,8 @@ def perform_search(domain, min_weight, max_weight, num_examples, num_inputs,
       target_num_without_lambda = num_tasks_per_weight - target_num_with_lambda
       choices_with_lambda = [v for v in choices if v.contains_lambda]
       choices_without_lambda = [v for v in choices if not v.contains_lambda]
-      print(f'{len(choices_with_lambda)} values have lambdas, and '
-            f'{len(choices_without_lambda)} values do not.')
+      #print(f'{len(choices_with_lambda)} values have lambdas, and '
+      #      f'{len(choices_without_lambda)} values do not.')
 
       if target_num_with_lambda > len(choices_with_lambda):
         # We don't have enough values with lambdas. Use them all and fill the
@@ -121,8 +120,8 @@ def perform_search(domain, min_weight, max_weight, num_examples, num_inputs,
         choices_without_lambda = choices_without_lambda[
             :target_num_without_lambda]
 
-      print(f'Choosing {len(choices_with_lambda)} values with lambdas, and '
-            f'{len(choices_without_lambda)} values without lambdas.')
+      #print(f'Choosing {len(choices_with_lambda)} values with lambdas, and '
+      #      f'{len(choices_without_lambda)} values without lambdas.')
       choices = choices_with_lambda + choices_without_lambda
       random.shuffle(choices)
 
@@ -159,9 +158,10 @@ def generate_data(domain, min_weight, max_weight,
     for weight, new_tasks in new_tasks_by_weight.items():
       tasks_by_weight[weight].extend(new_tasks)
       num_total_tasks += len(new_tasks)
-    print(f'Completed search {i+1} of {num_searches}. '
-          f'{num_total_tasks} tasks total.')
+    #print(f'Completed search {i+1} of {num_searches}. '
+    #      f'{num_total_tasks} tasks total.')
   return tasks_by_weight
+
 
 
 def datagen_worker(seed,
@@ -170,7 +170,7 @@ def datagen_worker(seed,
                    min_num_inputs, max_num_inputs,
                    timeout, num_tasks_per_weight, skip_probability=0,
                    lambda_skip_probability=0, lambda_fraction=None,
-                   shuffle_ops=False):
+                   shuffle_ops=False, dreamcoder_train_tasks= None):
   """A job to run in parallel using a multiprocessing pool."""
   exp_common.set_global_seed(seed)
   num_examples = random.randint(min_num_examples, max_num_examples)
@@ -181,8 +181,85 @@ def datagen_worker(seed,
       skip_probability=skip_probability,
       lambda_skip_probability=lambda_skip_probability,
       lambda_fraction=lambda_fraction,
-      shuffle_ops=shuffle_ops)
+      shuffle_ops=shuffle_ops, dreamcoder_train_tasks = dreamcoder_train_tasks)
   return tasks_by_weight
+
+
+def timeout_handler(signum, frame):
+    raise TimeoutError
+
+def dynamic_task_gen(args, domain, dreamcoder_train_tasks=None, split="train"):
+    def save_shard(task_list, weight, shard_index, split_name="train"):
+        filename = os.path.join(
+            args.data_save_dir,
+            f'{split_name}-weight-{weight}-{shard_index:05d}.pkl')
+        with open(filename, 'wb') as f:
+            cp.dump(task_list, f, cp.HIGHEST_PROTOCOL)
+
+    worker_fun = functools.partial(
+        datagen_worker, domain=domain,
+        min_weight=args.min_task_weight,
+        max_weight=args.max_task_weight,
+        min_num_examples=args.min_num_examples,
+        max_num_examples=args.max_num_examples,
+        min_num_inputs=args.min_num_inputs,
+        max_num_inputs=args.max_num_inputs,
+        timeout=args.data_gen_timeout + 30 * (len(domain.operations) - args.num_starting_ops),
+        num_tasks_per_weight=args.num_tasks_per_weight,
+        skip_probability=args.skip_probability,
+        lambda_skip_probability=args.lambda_skip_probability,
+        lambda_fraction=args.lambda_fraction,
+        shuffle_ops=args.shuffle_ops, dreamcoder_train_tasks=dreamcoder_train_tasks)
+
+    pool = multiprocessing.Pool(args.num_datagen_proc)
+    seeds = list(range(args.data_gen_seed, args.data_gen_seed + args.num_searches))
+    shard_index_per_weight = {
+        weight: args.shard_start_index
+        for weight in range(args.min_task_weight, args.max_task_weight + 1)
+    }
+
+    tasks_by_weight = collections.defaultdict(list)
+    total_num_tasks = 0
+
+    signal.signal(signal.SIGALRM, timeout_handler)
+    print("Forced timouter will happen after ", args.data_gen_timeout * math.ceil(args.num_searches / args.num_datagen_proc) + 120 + 30 * (len(domain.operations) - args.num_starting_ops), " seconds")
+    signal.alarm(args.data_gen_timeout * math.ceil(args.num_searches / args.num_datagen_proc) + 120 + 30 * (len(domain.operations) - args.num_starting_ops))
+
+    try:
+        for local_tasks_by_weight in tqdm(pool.imap_unordered(worker_fun, seeds),
+                                        total=len(seeds)):
+            for weight in sorted(local_tasks_by_weight.keys()):
+                local_tasks = local_tasks_by_weight[weight]
+                total_num_tasks += len(local_tasks)
+                tasks_by_weight[weight].extend(local_tasks)
+                while len(tasks_by_weight[weight]) >= args.shard_size:
+                    save_shard(task_list=tasks_by_weight[weight][:args.shard_size],
+                                weight=weight,
+                                shard_index=shard_index_per_weight[weight], split_name=split)
+                    shard_index_per_weight[weight] += 1
+                    tasks_by_weight[weight] = tasks_by_weight[weight][args.shard_size:]
+            
+        # save remaining tasks
+        for weight in sorted(tasks_by_weight.keys()):
+            if tasks_by_weight[weight]:
+                save_shard(task_list=tasks_by_weight[weight],
+                        weight=weight,
+                        shard_index=shard_index_per_weight[weight])
+
+        print(f'total # generated tasks: {total_num_tasks}')
+        pool.terminate()
+        signal.alarm(0)
+
+    except TimeoutError:
+        print("finished after forced timeout")
+        for weight in sorted(tasks_by_weight.keys()):
+            if tasks_by_weight[weight]:
+                save_shard(task_list=tasks_by_weight[weight],
+                        weight=weight,
+                        shard_index=shard_index_per_weight[weight])
+
+        print(f'total # generated tasks: {total_num_tasks}')
+        pool.terminate()
 
 
 def main(argv):
@@ -214,7 +291,8 @@ def main(argv):
     if FLAGS.verbose:
       for weight in sorted(tasks_by_weight.keys()):
         for i, task in enumerate(tasks_by_weight[weight]):
-          print(f'Task #{i} for weight {weight}: {task}')
+          pass
+          #print(f'Task #{i} for weight {weight}: {task}')
 
     for weight in sorted(tasks_by_weight.keys()):
       filename = os.path.join(FLAGS.data_save_dir,
@@ -255,7 +333,7 @@ def main(argv):
     }
     tasks_by_weight = collections.defaultdict(list)
     total_num_tasks = 0
-
+  
     for local_tasks_by_weight in tqdm(pool.imap_unordered(worker_fun, seeds),
                                       total=len(seeds)):
       for weight in sorted(local_tasks_by_weight.keys()):

@@ -24,9 +24,9 @@ def get_config():
   config.max_search_weight = 12
   config.grad_accumulate = 4
   config.beam_size = 10
-  config.gpu_list = '0,1,2,3'
+  config.gpu_list = '0,1,2'
   config.gpu = 0
-  config.num_proc = 8
+  config.num_proc = 3
   config.embed_dim = 128
   config.eval_every = 5000
   config.num_valid = 250
@@ -37,11 +37,11 @@ def get_config():
   config.timeout = 60
   config.encode_weight = True
   config.train_steps = 1000000
-  config.train_data_glob = 'train-tasks*.pkl'
-  config.test_data_glob = 'valid-tasks*.pkl'
+  config.train_data_glob = 'train-weight*.pkl'
+  config.test_data_glob = 'valid-weight*.pkl'
   config.random_beam = False
   config.use_op_specific_lstm = True
   config.lr = 5e-4
   config.load_model = ''
-  config.data_name = 't-3600-maxne-5-maxni-3-skip-0.00-lambdaskip-0.00-lambdafrac-0.80'
+  config.data_name = '/work/ldierkes/repos/LambdaBeam/t-60-maxne-5-maxni-3-skip-0.0-lambdaskip-0.0-lambdafrac-0.8-shuffleops-False'
   return config

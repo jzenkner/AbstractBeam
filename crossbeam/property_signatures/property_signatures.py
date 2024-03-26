@@ -69,7 +69,7 @@ DEFAULT_VALUES = {
 # DeepCoder only uses lambdas that take int(s) as input.
 VALUES_TO_TRY = {
     int: {
-        1: [-177, -84, -17, -3, -2, -1, 0, 1, 2, 3, 4, 5, 12, 47, 110, 213],
+        1: [-1, 0, 1, 2, 3, 4, 5, 12, [], [-1], [0], [1], [2], [12]],
         2: [[0, 0],
             [0, -13],
             [1, 5],
@@ -79,15 +79,30 @@ VALUES_TO_TRY = {
             [6, 0],
             [12, 12],
             [41, 4],
-            [104, -177],
             [-1, 2],
-            [-2, -3],
-            [-4, 8],
-            [-17, -16],
-            [-76, 173],
-            [-200, -26]],
-    },
-}
+            [-200, -26],
+            [[], [22, 11, 33, 3]],
+            [[], [10, 11, 3, 3, 11]],
+            [[1], []],
+            [[2], []],
+            [[5], []],
+            [[], [31, 13, 42]],
+            [[1], [5]],
+            [[14, 12, 12], [51, 31, 21]],
+            [[1,2,3], [2]],
+            [[], [1,11,12,51]],
+            [[1,2,3,4], []],
+            [[1,2,3,4], [1,2,3,4]],
+            [0, [1,2,3,16]],
+            [0, [7,2,9,45]],
+            [1, [5,3,9,12]],
+            [1, [3,4,9,42]],
+            [[1,2,3,4], 2]
+            ],
+    }
+  }
+
+
 
 # The maximum number of inputs for a lambda Value or an I/O example, if
 # fixed-length signatures are desired. The inputs will be padded or truncated to
@@ -383,6 +398,7 @@ def run_lambda(
   assert arity > 0
   io_with_example_index_list = []
   to_try = VALUES_TO_TRY[int][arity]
+  
   if arity == 1:
     to_try = [[i] for i in to_try]
   for try_index, inputs_list in enumerate(to_try):

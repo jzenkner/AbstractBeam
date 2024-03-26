@@ -15,9 +15,9 @@
 # limitations under the License.
 
 
-save_dir=${save_dir?}
+save_dir=/work/ldierkes/repos/LambdaBeam/crossbeam # ${save_dir?}
 config=${config?}
-name=${name?}
+name= ${name:=deepcoder_test}
 timeout=${timeout:=60}
 restarts_timeout=${restarts_timeout:=0}
 run=${run:=0}

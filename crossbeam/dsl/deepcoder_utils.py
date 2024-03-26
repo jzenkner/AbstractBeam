@@ -10,15 +10,69 @@ _OPS_NAMESPACE = {
     for op in deepcoder_operations.get_operations()
 }
 
+_OPS_NAMESPACE_LAMBDA = {
+    op.name: functools.partial(lambda *args, op: op.apply_single(args), op=op)
+    for op in deepcoder_operations.get_operations_()
+}
 
-def run_program(program, inputs_dict):
+def get_ops_namespace(dreamcoder_prims = True):
+   if dreamcoder_prims:
+      return _OPS_NAMESPACE
+   else:
+      return _OPS_NAMESPACE_LAMBDA
+
+
+def run_program(program, inputs_dict, dreamcoder_prims = True, inventions = None):
   outputs = []
+  if inventions is not None:
+    inv_namespace = {
+      op.name: functools.partial(lambda *args, op: op.apply_single(args), op=op)
+      for op in inventions
+    }
+  else:
+    inv_namespace = {}
   num_examples = len(inputs_dict[next(iter(inputs_dict))])
   for i in range(num_examples):
-    namespace = _OPS_NAMESPACE.copy()
+    namespace = get_ops_namespace(dreamcoder_prims).copy()
+    if inv_namespace is not None or inv_namespace != {}:
+        namespace = {**namespace, **inv_namespace}
     namespace.update({name: value[i] for name, value in inputs_dict.items()})
     outputs.append(eval(program, namespace))  # pylint: disable=eval-used
   return outputs
+
+
+def tokenize(s):
+    return re.findall(r'[()]|[^()]+', s)
+
+def parse(toks, depth=0):
+    ast = []
+
+    while toks:
+        t = toks.pop(0)
+
+        if t == '(':
+            ast.append(parse(toks, depth + 1))
+        elif t == ')':
+            if not depth:
+                raise SyntaxError('mismatched )')
+            return ast
+        else:
+            ast.append(t)
+
+    if depth:
+        raise SyntaxError('premature EOF')
+
+    return ast
+
+def generate(el):
+    if not isinstance(el, list):
+        return el
+
+    while len(el) == 1 and isinstance(el[0], list):
+        el = el[0]
+
+    return '(' + ''.join(map(generate, el)) + ')'
+
 
 
 def simplify(program, verbose=False):

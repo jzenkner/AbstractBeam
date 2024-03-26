@@ -46,7 +46,7 @@ from torch.utils import tensorboard
 import datetime
 import multiprocessing
 from multiprocessing import Manager
-import dill as pickle
+
 
 # Abstraction
 from crossbeam.abstraction.lambdabeam2dreamcoder import build_compression_programs 
@@ -121,7 +121,7 @@ def do_eval(eval_tasks, domain, model,
             max_search_weight, beam_size, device, verbose=False,
             timeout=None, restarts_timeout=None, max_values_explored=None,
             is_stochastic=False, use_ur=True, use_type_masking=True,
-            static_weight=False, temperature=1.0, inventions = [], used_invs = None):
+            static_weight=False, temperature=1.0, inventions = []):
   if verbose:
     print(f'doing eval on {len(eval_tasks)} tasks...')
 
@@ -130,7 +130,7 @@ def do_eval(eval_tasks, domain, model,
   json_dict = {'results': []}
   #print(len(eval_tasks))
   for t in eval_tasks:
-    print(t.name)
+    #print(t)
     start_time = timeit.default_timer()
     with torch.no_grad():
       out, (all_values, all_signatures), stats = synthesis.synthesize(
@@ -148,8 +148,7 @@ def do_eval(eval_tasks, domain, model,
           masking=use_type_masking,
           static_weight=static_weight,
           temperature=temperature,
-          inventions = inventions,
-          used_invs = used_invs
+          inventions = inventions
           )
     elapsed_time = timeit.default_timer() - start_time
     synthesis.update_stats_with_percents(stats)
@@ -173,8 +172,6 @@ def do_eval(eval_tasks, domain, model,
         'solution_weight': out.get_weight() if out else None,
         'stats': stats,
     }
-    if bool(out):
-      print("found one")
     json_dict['results'].append(results_dict)
     if True:
       #print('Elapsed time: {:.2f}'.format(elapsed_time))
@@ -210,14 +207,12 @@ def _gather_eval_info(rank, device, local_acc, local_num):
   return succ
 
 
-def train_eval_loop(args, device, model, trace_gen, checkpoint, original_tasks):
+def train_eval_loop(args, device, model, weighted_train_files, weighted_test_files, eval_tasks,
+                    task_gen, trace_gen, checkpoint, original_tasks):
   is_distributed = args.num_proc > 1
   dreamcoder_train_tasks = None
-  # model = model.to(device)
-  log_folder = os.path.join(args.save_dir, 'logs')
-  if not os.path.isdir(log_folder):
-    os.makedirs(log_folder)
-  log_writer = tensorboard.SummaryWriter(log_folder)
+  print("device:", device)
+  model = model.to(device)
   optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
   if checkpoint is not None:
     model.load_state_dict(checkpoint['model'])
@@ -262,13 +257,11 @@ def train_eval_loop(args, device, model, trace_gen, checkpoint, original_tasks):
                                 static_weight=args.static_weight,
                                 temperature=args.temperature,
                                 inventions = inventions,
-                                verbose = False,
-                                used_invs = args.used_invs if args.used_invs else None)
+                                verbose = False)
   if args.do_test: # test only
     assert args.num_proc == 1
     print('Doing test only!')
-    model = model.to(device)
-    succ, json_dict = eval_func(original_tasks, domain, model, verbose=True, inventions = inventions)
+    succ, json_dict = eval_func(eval_tasks, domain, model, verbose=not is_distributed, inventions = inventions)
     if args.json_results_file:
       with open(args.json_results_file, 'w') as f:
         json.dump(json_dict, f, indent=4, sort_keys=True)
@@ -276,63 +269,111 @@ def train_eval_loop(args, device, model, trace_gen, checkpoint, original_tasks):
     print('Done testing! Exiting.')
     sys.exit()
 
+  #fn_taskgen = None
+  #if task_gen is not None:
+  #  fn_taskgen = lambda: task_gen(domain)
+
   best_succ = -1
+
+  if is_distributed:
+    rank = dist.get_rank()
+  else:
+    rank = 0
+  if rank == 0:
+    log_folder = os.path.join(args.save_dir, 'logs')
+    if not os.path.isdir(log_folder):
+      os.makedirs(log_folder)
+    log_writer = tensorboard.SummaryWriter(log_folder)
+
+  if not args.dynamic_tasks:
+    train_data = TrainTaskGen(weighted_train_files, local_batch_size=args.grad_accumulate,
+                              fn_taskgen=task_gen)
+
+    eval_data = EvalTaskGen(args.num_valid, weighted_test_files, fn_taskgen=task_gen)
+    task_scheduler = TaskScheduler(args, weighted_train_files.keys())
+    canonical_task_schedule = TaskScheduler(args, weighted_test_files.keys(), 'uniform').get_schedule(0)
+    canonical_eval_tasks = list(eval_data.datagen(0, canonical_task_schedule, domain=domain))
+
+    current_task_schedule = task_scheduler.get_schedule(starting_step)
+
+    skip_steps = starting_step
+    curriculum_stage = 0
+    if args.get('steps_per_curr_stage', 0):
+      skip_steps = starting_step % args.steps_per_curr_stage
+      curriculum_stage = starting_step // args.steps_per_curr_stage
+    train_gen = train_data.datagen(curriculum_stage, current_task_schedule, domain = domain)
+    for _ in range(skip_steps):
+      next(train_gen)
+
+    # best_succ = defaultdict(lambda: -1)
+    best_succ = -1
+    if len(eval_tasks) == 0:
+      eval_tasks = list(eval_data.datagen(curriculum_stage, current_task_schedule, domain=domain))
+    else:
+      canonical_eval_tasks = eval_tasks
+
+  
+
   for cur_step in range(starting_step, args.train_steps, args.eval_every):
     # Evaluation
     if cur_step > starting_step:
-      if args.abstraction:
-        args.abstract_every = args.abstract_every + 10000
-      print('eval at step %d' % cur_step)
-      succ, json_dict = eval_func(original_tasks, domain, model, verbose=False, inventions = inventions)
-      # safe json dump
-      if json_dict:
-        with open("/work/ldierkes/repos/new/LambdaBeam/consolidation/heeelp.json", 'w') as f:
-          json.dump(json_dict, f, indent=4)
+      if rank == 0:
+        print('eval at step %d' % cur_step)
+      eval_tasks = [] # TODO: Change again if random tasks should be used for compression
+      succ, json_dict = eval_func(eval_tasks + original_tasks, domain, model, verbose=not is_distributed, inventions = inventions)
 
-
-      json_dict["num_operations"] = len(domain.operations)
       # Abstraction
-      # run abs if abstraction is true and cur_step is 10000, 20000, ...
       if args.abstraction:
         print("STARTING ABSTRACTION PHASE")
-        programs, tasks, frontiers = build_compression_programs(json_dict, base_function_dict, higher_order_functions, frontiers, args.top_k)
+
+        programs = build_compression_programs(json_dict, base_function_dict, higher_order_functions, frontiers, args.top_k)
+
+        # Rewrite new solutions by already exisiting abstractions for better compression results
+        if len(dc_abstractions) > 0 and len(programs) > 0:
+          try:
+            #programs = rewrite(programs, dc_abstractions).rewritten
+            pass
+          except Exception as e:
+            # save programs and dc_abstractions in a file for later debugging
+            print("Error in rewriting programs:", programs)
+            print("Error in rewriting dc_abstractions:", dc_abstractions)
+            print("Error message:", e)
+            with open("/work/ldierkes/repos/new/LambdaBeam/consolidation/programs.pkl", 'wb') as file:
+              cp.dump(programs, file)
+            
+            with open("/work/ldierkes/repos/new/LambdaBeam/consolidation/dc_abstractions.pkl", 'wb') as file:
+              cp.dump(dc_abstractions, file)
+
 
         if len(inventions) > 0:
           max_inv_name = max([int(inv.name.split("_")[1]) for inv in inventions])
         else:
           max_inv_name = -1
+        res = compress(programs, iterations=args.num_inventions_per_iter, max_arity=args.invention_arity, previous_abstractions = max_inv_name + 1, no_curried_metavars = False) 
+        print("THESE ARE THE (NEW) ABSTRACTIONS")
+        print(res.abstractions)
+        inventions, higher_order_functions, base_function_dict, optimizer, added_invention = build_inventions(res.abstractions, inventions, higher_order_functions, base_function_dict, model, optimizer, device, lr=args.lr, initialization_method=args.initialization_method, dc_abstractions = dc_abstractions, pruning=args.abstraction_pruning, domain = domain, max_invention = args.max_invention)
 
-        if len(programs)>0:
-          res = compress(programs, tasks = tasks, iterations=args.num_inventions_per_iter, max_arity=args.invention_arity-1, previous_abstractions = max_inv_name + 1, no_curried_metavars = False) 
+      if rank == 0:
+        checkpoint = {
+          'step': cur_step,
+          'model': model.state_dict(),
+          'optimizer': optimizer.state_dict(),
+          'inventions': inventions,
+          "higher_order_functions": higher_order_functions,
+          "base_function_dict": base_function_dict,
+          "dc_abstractions": dc_abstractions,
+          "domain": domain,
+          "frontiers": frontiers
+        }
 
-          print("THESE ARE THE (NEW) ABSTRACTIONS")
-          print(res.abstractions)
-
-          inv_namespace = {
-            op.name: functools.partial(lambda *args, op: op.apply_single(args), op=op)
-            for op in inventions
-          }
-
-          inventions, higher_order_functions, base_function_dict, optimizer, added_invention = build_inventions(res.abstractions, inventions, higher_order_functions, base_function_dict, model, optimizer, device, lr=args.lr, initialization_method=args.initialization_method, dc_abstractions = dc_abstractions, pruning=args.abstraction_pruning, domain = domain, max_invention = args.max_invention, inv_namespace = inv_namespace)
-
-      model = model.to(device)
-      checkpoint = {
-        'step': cur_step,
-        'model': model.state_dict(),
-        'optimizer': optimizer.state_dict(),
-        'inventions': inventions,
-        "higher_order_functions": higher_order_functions,
-        "base_function_dict": base_function_dict,
-        "dc_abstractions": dc_abstractions,
-        "domain": domain,
-        "frontiers": frontiers
-      }
-
-      print('saving model at step %d' % cur_step)
-      save_file = os.path.join(args.save_dir, 'model-latest.ckpt')
-      torch.save(checkpoint, save_file)
-      log_writer.add_scalar('eval/succ', succ, cur_step)
-      if succ > best_succ and args.save_dir:
+        print('saving model at step %d' % cur_step)
+        save_file = os.path.join(args.save_dir, 'model-latest.ckpt')
+        torch.save(checkpoint, save_file)
+        log_writer.add_scalar('eval/succ', succ, cur_step)
+      if args.num_proc > 1:
+        succ = _gather_eval_info(rank, device, succ, len(canonical_eval_tasks))
+      if succ > best_succ and rank == 0 and args.save_dir:
         print('saving best model dump so far with %.2f%% valid succ' % (succ * 100))
         best_succ = succ
         save_file = os.path.join(args.save_dir, 'model-best-valid.ckpt')
@@ -343,8 +384,22 @@ def train_eval_loop(args, device, model, trace_gen, checkpoint, original_tasks):
             json.dump(json_dict, f, indent=4, sort_keys=True)
           print('Wrote JSON results file at {}'.format(args.json_results_file))
 
-    if args.dynamic_tasks:
 
+    """
+    # Training
+    new_task_schedule = task_scheduler.get_schedule(cur_step)
+    if new_task_schedule != current_task_schedule:
+      current_task_schedule = new_task_schedule
+      curriculum_stage += 1
+      new_evals = list(eval_data.datagen(curriculum_stage, current_task_schedule, domain=domain))
+      if len(new_evals):
+        eval_tasks = new_evals
+      train_gen = train_data.datagen(curriculum_stage, current_task_schedule, domain)
+      if rank == 0:
+        print('updated task schedule to', current_task_schedule)
+    """
+
+    if args.dynamic_tasks:
       print("Start dynamic task generation")
 
       # delete old tasks
@@ -360,48 +415,109 @@ def train_eval_loop(args, device, model, trace_gen, checkpoint, original_tasks):
       dynamic_task_gen(args, domain, dreamcoder_train_tasks, "train")
       args.data_gen_seed += 1
 
+
+      skip_steps = 0
       curriculum_stage = 0
-    #curriculum_stage = 0
-    procs = []
+      
+      weighted_train_files = get_local_weighted_files(args, 0, "train-*.pkl", args.data_save_dir)
 
-    model = model.to(device)
-    checkpoint = {
-        'step': cur_step,
-        'model': model.state_dict(),
-        'optimizer': optimizer.state_dict(),
-        'inventions': inventions,
-        "higher_order_functions": higher_order_functions,
-        "base_function_dict": base_function_dict,
-        "dc_abstractions": dc_abstractions,
-        "domain": domain,
-        "frontiers": frontiers
-      }
-    # safe current ckpt
-    save_file = os.path.join(args.save_dir, 'model-latest.ckpt')
-    torch.save(checkpoint, save_file)
+      train_data = TrainTaskGen(weighted_train_files, local_batch_size=args.grad_accumulate,
+                            fn_taskgen=None)
 
 
-    devices = [get_torch_device(int(x.strip())) for x in args.gpu_list.split(',')]
-    for rank, device_1 in enumerate(devices):
-      weighted_train_files = get_local_weighted_files(args, rank, "train-*.pkl", args.data_save_dir)
+      task_scheduler = TaskScheduler(args, weighted_train_files.keys())
+      current_task_schedule = task_scheduler.get_schedule(0)
+      
+      train_gen = train_data.datagen(curriculum_stage, current_task_schedule, domain = domain)
+    
+    """for rank, device in enumerate(args.devices):
+      train_local_files = get_local_weighted_files(args, rank, args.train_data_glob)"""
 
-      proc = mp.Process(target=train_model_mp,
-                        args=(args, rank, model, optimizer, weighted_train_files, curriculum_stage, trace_gen, domain, device_1, inventions, is_distributed, cur_step))
-      procs.append(proc)
-      proc.start()
-    model.to(device)
-    for proc in procs:
-      proc.join()
-    print("finished Training") 
-  
-  print('Training finished. Performing final evaluation...')
-  succ, _ = eval_func(original_tasks, domain, model, verbose=False)
+
+    pbar = range(args.eval_every) if rank else tqdm(range(args.eval_every))
+    verbose = False  # TODO(kshi)
+    profile = False  # TODO(kshi)
+
+    print(model.op_idx_map)
+    for inner_step in pbar:
+      grad_step_start_time = timeit.default_timer()
+      optimizer.zero_grad()
+      batch_tasks = next(train_gen)
+      batch_traces = [list(trace_gen(t.solution)) for t in batch_tasks]
+      loss_acc = []
+      total_synthesis_time = 0
+      for t, trace in zip(batch_tasks, batch_traces):
+        with torch.no_grad():
+          synthesis_start_time = timeit.default_timer()
+          if profile:
+            pr = cProfile.Profile()
+            pr.enable()
+          training_samples, (all_values, all_signatures), stats = synthesis.synthesize(
+              t, domain, model, device=device,
+              trace=trace,
+              max_weight=args.max_search_weight,
+              k=args.beam_size,
+              is_training=True,
+              random_beam=args.random_beam,
+              masking=args.type_masking,
+              static_weight=args.static_weight,
+              inventions=inventions
+              )  # No temperature for training.
+          
+          if profile:
+            pr.disable()
+          synthesis_elapsed_time = timeit.default_timer() - synthesis_start_time
+          if profile and synthesis_elapsed_time > 0.5:
+            pr.print_stats(sort='cumtime')
+            print(f'The above is for a long-running synthesis search of {synthesis_elapsed_time:.2f} seconds.')
+            print('Stats:')
+            pprint.pprint(stats)
+          total_synthesis_time += synthesis_elapsed_time
+        synthesis.update_stats_with_percents(stats)
+        stats.update({
+            'task_num_inputs': len(t.inputs_dict),
+            'task_solution_weight': t.solution.get_weight() if t.solution else None,
+            'elapsed_time': synthesis_elapsed_time,
+            'num_unique_values': len(all_values),
+        })
+        if verbose:
+          pprint.pprint(stats)
+
+        if isinstance(training_samples, list):
+          loss = task_loss(t, device, training_samples, all_values, all_signatures, model, score_normed=args.score_normed) / args.num_proc
+          loss = loss / args.grad_accumulate
+          loss.backward()
+          loss_acc.append(loss.item())
+      loss = np.sum(loss_acc)
+      if is_distributed:
+        for param in model.parameters():
+          if param.grad is None:
+            param.grad = param.data.new(param.data.shape).zero_()
+          with torch.cuda.device(device):
+            dist.all_reduce(param.grad.data, op=dist.ReduceOp.SUM)
+      if args.grad_clip > 0:
+        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=args.grad_clip)
+      optimizer.step()
+      if (inner_step + cur_step) % args.log_every == 0:
+        if rank == 0:
+          log_writer.add_scalar('train/loss', loss * args.num_proc, inner_step + cur_step)
+        logging.info('train/loss: %.4f at step %d', loss * args.num_proc, inner_step + cur_step)
+      grad_step_elapsed_time = timeit.default_timer() - grad_step_start_time      
+
+      if verbose:
+        logging.info(f'Grad step time: {grad_step_elapsed_time:.2f} sec')
+        logging.info(f'Synthesis time: {total_synthesis_time:.2f} sec '
+              f'({total_synthesis_time * 100 / grad_step_elapsed_time:.1f}% of grad step time)')
+
+  if rank == 0:
+    print('Training finished. Performing final evaluation...')
+  succ, _ = eval_func(eval_tasks, domain, model, verbose=not is_distributed)
   if args.num_proc > 1:
-    _gather_eval_info(rank, device, succ, len(original_tasks))
+    _gather_eval_info(rank, device, succ, len(eval_tasks))
 
 
 @thread_wrapped_func
-def train_model_mp(args, rank, model, optimizer, weighted_train_files, curriculum_stage,  trace_gen, domain, device, inventions, is_distributed, cur_step):
+def train_mp(args, rank, device, model, train_files, test_files, eval_tasks, task_gen, trace_gen, checkpoint):
   if args.num_proc > 1:
     torch.set_num_threads(1)
   os.environ['MASTER_ADDR'] = '127.0.0.1'
@@ -411,90 +527,7 @@ def train_model_mp(args, rank, model, optimizer, weighted_train_files, curriculu
   else:
     backend = 'gloo'
   dist.init_process_group(backend, rank=rank, world_size=args.num_proc)
-  train_model(args, rank, model, optimizer, weighted_train_files, curriculum_stage, trace_gen, domain, device, inventions, is_distributed, cur_step)
-
-def train_model(args, rank, model, optimizer, weighted_train_files, curriculum_stage, trace_gen, domain, device, inventions, is_distributed=False, cur_step=0):
-  train_data = TrainTaskGen(weighted_train_files, local_batch_size=args.grad_accumulate,
-                       fn_taskgen=None)
-  
-  model = model.to(device)
-  print(device)
-  # optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
-  task_scheduler = TaskScheduler(args, weighted_train_files.keys())
-  current_task_schedule = task_scheduler.get_schedule(0)
-  
-  train_gen = train_data.datagen(curriculum_stage, current_task_schedule, domain = domain)
-  pbar = range(args.eval_every) if rank else tqdm(range(args.eval_every))
-  verbose = False  # TODO(kshi)
-  profile = False  # TODO(kshi)
-
-  for inner_step in pbar:
-    grad_step_start_time = timeit.default_timer()
-    optimizer.zero_grad()
-    batch_tasks = next(train_gen)
-    batch_traces = [list(trace_gen(t.solution)) for t in batch_tasks]
-    loss_acc = []
-    total_synthesis_time = 0
-    for t, trace in zip(batch_tasks, batch_traces):
-      with torch.no_grad():
-        synthesis_start_time = timeit.default_timer()
-        if profile:
-          pr = cProfile.Profile()
-          pr.enable()
-        training_samples, (all_values, all_signatures), stats = synthesis.synthesize(
-            t, domain, model, device=device,
-            trace=trace,
-            max_weight=args.max_search_weight,
-            k=args.beam_size,
-            is_training=True,
-            random_beam=args.random_beam,
-            masking=args.type_masking,
-            static_weight=args.static_weight,
-            inventions=inventions
-            )  # No temperature for training.
-        
-        if profile:
-          pr.disable()
-        synthesis_elapsed_time = timeit.default_timer() - synthesis_start_time
-        if profile and synthesis_elapsed_time > 0.5:
-          pr.print_stats(sort='cumtime')
-          print(f'The above is for a long-running synthesis search of {synthesis_elapsed_time:.2f} seconds.')
-          print('Stats:')
-          pprint.pprint(stats)
-        total_synthesis_time += synthesis_elapsed_time
-      synthesis.update_stats_with_percents(stats)
-      stats.update({
-          'task_num_inputs': len(t.inputs_dict),
-          'task_solution_weight': t.solution.get_weight() if t.solution else None,
-          'elapsed_time': synthesis_elapsed_time,
-          'num_unique_values': len(all_values),
-      })
-      if verbose:
-        pprint.pprint(stats)
-
-      if isinstance(training_samples, list):
-        loss = task_loss(t, device, training_samples, all_values, all_signatures, model, score_normed=args.score_normed) / args.num_proc
-        loss = loss / args.grad_accumulate
-        loss.backward()
-        loss_acc.append(loss.item())
-    loss = np.sum(loss_acc)
-    if is_distributed:
-      for param in model.parameters():
-        if param.grad is None:
-          param.grad = param.data.new(param.data.shape).zero_()
-        with torch.cuda.device(device):
-          dist.all_reduce(param.grad.data, op=dist.ReduceOp.SUM)
-    if args.grad_clip > 0:
-      torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=args.grad_clip)
-    optimizer.step()
-    if (inner_step + cur_step) % args.log_every == 0:
-      logging.info('train/loss: %.4f at step %d', loss * args.num_proc, inner_step + cur_step)
-    grad_step_elapsed_time = timeit.default_timer() - grad_step_start_time      
-
-    if verbose:
-      logging.info(f'Grad step time: {grad_step_elapsed_time:.2f} sec')
-      logging.info(f'Synthesis time: {total_synthesis_time:.2f} sec '
-            f'({total_synthesis_time * 100 / grad_step_elapsed_time:.1f}% of grad step time)')
+  train_eval_loop(args, device, model, train_files, test_files, eval_tasks, task_gen, trace_gen, checkpoint)
 
 
 def get_local_weighted_files(args, rank, data_glob, data_folder):
@@ -520,7 +553,41 @@ def get_local_weighted_files(args, rank, data_glob, data_folder):
     return local_weighted_files
 
 
-def main_train_eval(args, model, trace_gen, checkpoint, original_tasks):
-  device = args.gpu
-  train_eval_loop(args, get_torch_device(device), model, trace_gen, checkpoint, original_tasks)
+def main_train_eval(args, model, eval_tasks, task_gen, trace_gen, checkpoint, original_tasks):
+  if args.num_proc > 1:
+    if args.gpu_list is not None:
+      devices = [get_torch_device(int(x.strip())) for x in args.gpu_list.split(',')]
+      if len(devices) < args.num_proc:
+        assert args.num_proc % len(devices) == 0
+        n_proc_per_gpu = args.num_proc // len(devices)
+        devices = devices * n_proc_per_gpu
+    else:
+      devices = ['cpu'] * args.num_proc
+    assert len(devices) == args.num_proc
+    nq_per_proc = math.ceil(len(eval_tasks) / args.num_proc)
+    procs = []
+    for rank, device in enumerate(devices):
+      local_eval_tasks = eval_tasks[rank * nq_per_proc : (rank + 1) * nq_per_proc]
+      if args.num_valid > 0:
+        local_eval_tasks = local_eval_tasks[:args.num_valid]
+      train_local_files = get_local_weighted_files(args, rank, args.train_data_glob)
+      test_local_files = get_local_weighted_files(args, rank, args.test_data_glob)
+      proc = mp.Process(target=train_mp,
+                        args=(args, rank, device, model, train_local_files, test_local_files, local_eval_tasks,
+                              task_gen, trace_gen, checkpoint))
+      procs.append(proc)
+      proc.start()
+    for proc in procs:
+      proc.join()
+  else:
+    device = args.gpu
+    if args.gpu_list is not None:
+      device = int(args.gpu_list.strip())
+    if args.num_valid > 0:
+      eval_tasks = eval_tasks[:args.num_valid]
+    train_weighted_files = get_local_weighted_files(args, 0, args.train_data_glob, args.data_folder)
+    test_weighted_files = get_local_weighted_files(args, 0, args.test_data_glob, args.data_folder)
+    train_eval_loop(args, get_torch_device(device), model, train_weighted_files, test_weighted_files,
+                    eval_tasks, task_gen, trace_gen, checkpoint, original_tasks)
   logging.info("Training finished!!")
+

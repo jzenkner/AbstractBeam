@@ -36,6 +36,7 @@ def get_config():
     num_tasks=1000,
     num_searches=100,
     data_gen_timeout=60,
+    num_examples=2,
     min_num_examples=2,
     max_num_examples=4,
     min_num_inputs=1,

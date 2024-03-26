@@ -28,11 +28,16 @@ def comma_variable_list(variables):
 
 class OperationBase(abc.ABC):
   """An operation used in synthesis."""
-
-  def __init__(self, name, arity, weight=1, num_bound_variables=None):
+  invention_counter = 0
+  def __init__(self, name, arity, weight=1, num_bound_variables=None, inv_name = None):
     self.name = name
     self.arity = arity
     self.weight = weight
+    if self.name == 'Invented':
+      self.name = inv_name
+    else:
+      self.name = name
+      
     if num_bound_variables is None:
       self.num_bound_variables = [0] * self.arity
       self.bound_variables = [[]] * self.arity
@@ -51,7 +56,7 @@ class OperationBase(abc.ABC):
     return repr(self) == repr(other)
 
   def __repr__(self):
-    return type(self).__name__
+    return self.name
 
   def arg_types(self):
     """The types of this operation's arguments, or None to allow any types."""
@@ -158,7 +163,7 @@ class OperationBase(abc.ABC):
     """Returns a tokenized expression for an application of this operation."""
     tokens = []
     if free_variables:
-      tokens.append('lambda ')
+      tokens.append('(lambda ')
       tokens.extend(comma_variable_list(free_variables))
       tokens.append(': ')
 
@@ -168,7 +173,7 @@ class OperationBase(abc.ABC):
       if i > 0:
         tokens.append(', ')
       if bound_variables:
-        tokens.append('lambda ')
+        tokens.append('(lambda ')
         tokens.extend(comma_variable_list(bound_variables))
         tokens.append(': ')
       if variables:
@@ -179,5 +184,9 @@ class OperationBase(abc.ABC):
         tokens.append(')')
       else:
         tokens.extend(arg.tokenized_expression())
+      if bound_variables:
+        tokens.append(')')
     tokens.append(')')
+    if free_variables:
+      tokens.append(')')
     return tokens

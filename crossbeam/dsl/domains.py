@@ -29,7 +29,7 @@ from crossbeam.dsl import tuple_operations
 
 Domain = collections.namedtuple(
     'Domain',
-    ['name', 'operations', 'constants', 'constants_extractor',
+    ['name', 'operations', 'inventions', 'constants', 'constants_extractor',
      'inputs_dict_generator', 'input_charset', 'input_max_len',
      'output_charset', 'output_max_len', 'value_charset', 'value_max_len',
      'program_tokens', 'output_type', 'small_value_filter', 'checker_function'])
@@ -38,6 +38,7 @@ Domain = collections.namedtuple(
 TUPLE_DOMAIN = Domain(
     name='tuple',
     operations=tuple_operations.get_operations(),
+    inventions= [],
     constants=[0],
     constants_extractor=None,
     inputs_dict_generator=random_data.RANDOM_INTEGER_INPUTS_DICT_GENERATOR,
@@ -55,6 +56,7 @@ TUPLE_DOMAIN = Domain(
 ARITHMETIC_DOMAIN = Domain(
     name='arithmetic',
     operations=arithmetic_operations.get_operations(),
+    inventions= [],
     constants=[-1, 1, 2, 3],
     constants_extractor=None,
     inputs_dict_generator=random_data.RANDOM_INTEGER_INPUTS_DICT_GENERATOR,
@@ -87,6 +89,7 @@ def _bustle_small_value_filter(x):
 BUSTLE_DOMAIN = Domain(
     name='bustle',
     operations=bustle_operations.get_operations(),
+    inventions= [],
     constants=None,
     constants_extractor=bustle_data.bustle_constants_extractor,
     inputs_dict_generator=bustle_data.bustle_inputs_dict_generator,
@@ -104,6 +107,7 @@ BUSTLE_DOMAIN = Domain(
 LOGIC_DOMAIN = Domain(
     name='logic',
     operations=logic_operations.get_operations(),
+    inventions= [],
     constants=[],
     constants_extractor=None,
     inputs_dict_generator=logic_data.logic_inputs_dict_generator,
@@ -122,7 +126,26 @@ LOGIC_DOMAIN = Domain(
 DEEPCODER_DOMAIN = Domain(
     name='deepcoder',
     operations=deepcoder_operations.get_operations(),
-    constants=[-1, 0, 1, 2, 3, 4],
+    inventions= [],
+    constants=[0, 1, []],
+    constants_extractor=None,
+    inputs_dict_generator=deepcoder_data.deepcoder_inputs_dict_generator,
+    input_charset=None,  # TODO(kshi)
+    input_max_len=None,  # TODO(kshi)
+    output_charset=None,  # TODO(kshi)
+    output_max_len=None,  # TODO(kshi)
+    value_charset=None,  # TODO(kshi)
+    value_max_len=None,  # TODO(kshi)
+    program_tokens=None,  # TODO(kshi)
+    output_type=(int, list),
+    small_value_filter=deepcoder_operations.deepcoder_small_value_filter,
+    checker_function=checker.check_solution)
+
+DEEPCODER_DOMAIN_LAMBDABEAM = Domain(
+    name='deepcoder_lambdabeam',
+    operations=deepcoder_operations.get_operations_(),
+    inventions= [],
+    constants=[-1, 0, 1, 2, 3, 4,],
     constants_extractor=None,
     inputs_dict_generator=deepcoder_data.deepcoder_inputs_dict_generator,
     input_charset=None,  # TODO(kshi)
@@ -137,6 +160,7 @@ DEEPCODER_DOMAIN = Domain(
     checker_function=checker.check_solution)
 
 
+
 def get_domain(domain_str):
   if domain_str == 'tuple':
     return TUPLE_DOMAIN
@@ -148,5 +172,7 @@ def get_domain(domain_str):
     return LOGIC_DOMAIN
   elif domain_str == 'deepcoder':
     return DEEPCODER_DOMAIN
+  elif domain_str == 'deepcoder_lambdabeam':
+    return DEEPCODER_DOMAIN_LAMBDABEAM
   else:
     raise ValueError('Unknown domain: {}'.format(domain_str))
