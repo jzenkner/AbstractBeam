@@ -123,8 +123,8 @@ LOGIC_DOMAIN = Domain(
     checker_function=None)
 
 
-DEEPCODER_DOMAIN = Domain(
-    name='deepcoder',
+DREAMCODER_DOMAIN = Domain(
+    name='dreamcoder',
     operations=deepcoder_operations.get_operations(),
     inventions= [],
     constants=[0, 1, []],
@@ -141,8 +141,8 @@ DEEPCODER_DOMAIN = Domain(
     small_value_filter=deepcoder_operations.deepcoder_small_value_filter,
     checker_function=checker.check_solution)
 
-DEEPCODER_DOMAIN_LAMBDABEAM = Domain(
-    name='deepcoder_lambdabeam',
+DEEPCODER_DOMAIN = Domain(
+    name='deepcoder',
     operations=deepcoder_operations.get_operations_(),
     inventions= [],
     constants=[-1, 0, 1, 2, 3, 4,],
@@ -170,9 +170,9 @@ def get_domain(domain_str):
     return BUSTLE_DOMAIN
   elif domain_str == 'logic':
     return LOGIC_DOMAIN
+  elif domain_str == 'dreamcoder':
+    return DREAMCODER_DOMAIN
   elif domain_str == 'deepcoder':
     return DEEPCODER_DOMAIN
-  elif domain_str == 'deepcoder_lambdabeam':
-    return DEEPCODER_DOMAIN_LAMBDABEAM
   else:
     raise ValueError('Unknown domain: {}'.format(domain_str))

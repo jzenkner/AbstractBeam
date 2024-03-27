@@ -47,6 +47,7 @@ import datetime
 import multiprocessing
 from multiprocessing import Manager
 import dill as pickle
+import git
 
 # Abstraction
 from crossbeam.abstraction.lambdabeam2dreamcoder import build_compression_programs 
@@ -238,10 +239,10 @@ def train_eval_loop(args, device, model, trace_gen, checkpoint, original_tasks):
   else:
     starting_step = 0
     # Abstraction Initialization
-    if args.dreamcoder:
+    if args.domain == "dreamcoder":
       higher_order_functions = {"Map": [1,0], "Fold": [2,0,0]}
       base_function_dict = get_function_dict()
-    else:
+    elif args.domain == "deepcoder":
       higher_order_functions = {"Map": [1,0], "Filter": [1,0], "Count": [1,0], "ZipWith": [2,0,0], "Scanl1": [2,0]}
       base_function_dict = get_lambdabeam_function_dict()
     inventions = []
@@ -280,15 +281,8 @@ def train_eval_loop(args, device, model, trace_gen, checkpoint, original_tasks):
   for cur_step in range(starting_step, args.train_steps, args.eval_every):
     # Evaluation
     if cur_step > starting_step:
-      if args.abstraction:
-        args.abstract_every = args.abstract_every + 10000
       print('eval at step %d' % cur_step)
-      succ, json_dict = eval_func(original_tasks, domain, model, verbose=False, inventions = inventions)
-      # safe json dump
-      if json_dict:
-        with open("/work/ldierkes/repos/new/LambdaBeam/consolidation/heeelp.json", 'w') as f:
-          json.dump(json_dict, f, indent=4)
-
+      succ, json_dict = eval_func(original_tasks, domain, model, verbose=False, inventions = inventions)    
 
       json_dict["num_operations"] = len(domain.operations)
       # Abstraction
@@ -351,17 +345,16 @@ def train_eval_loop(args, device, model, trace_gen, checkpoint, original_tasks):
       for file in glob.glob(os.path.join(args.data_save_dir, "train-*.pkl")):
         os.remove(file)
       
-      if dreamcoder_train_tasks is None and args.dreamcoder:
-        with open("/work/ldierkes/repos/new/LambdaBeam/crossbeam/data/dreamcoder_train_tasks.pkl", "rb") as f:
+      repo_dir = git.Repo('.', search_parent_directories=True).working_tree_dir
+      if dreamcoder_train_tasks is None and args.domain == "dreamcoder":
+        with open(repo_dir + "/crossbeam/data/dreamcoder_train_tasks.pkl", "rb") as f:
             dreamcoder_train_tasks = cp.load(f)
-      else: 
-        dreamcoder_train_tasks = None
+      
       # Generate new tasks
-      dynamic_task_gen(args, domain, dreamcoder_train_tasks, "train")
+      dynamic_task_gen(args, domain, dreamcoder_train_tasks)
       args.data_gen_seed += 1
 
       curriculum_stage = 0
-    #curriculum_stage = 0
     procs = []
 
     model = model.to(device)
@@ -379,7 +372,6 @@ def train_eval_loop(args, device, model, trace_gen, checkpoint, original_tasks):
     # safe current ckpt
     save_file = os.path.join(args.save_dir, 'model-latest.ckpt')
     torch.save(checkpoint, save_file)
-
 
     devices = [get_torch_device(int(x.strip())) for x in args.gpu_list.split(',')]
     for rank, device_1 in enumerate(devices):
@@ -418,8 +410,6 @@ def train_model(args, rank, model, optimizer, weighted_train_files, curriculum_s
                        fn_taskgen=None)
   
   model = model.to(device)
-  print(device)
-  # optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
   task_scheduler = TaskScheduler(args, weighted_train_files.keys())
   current_task_schedule = task_scheduler.get_schedule(0)
   

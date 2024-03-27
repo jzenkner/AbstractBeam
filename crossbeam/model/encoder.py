@@ -398,8 +398,9 @@ indexed_concat = IndexedConcat.apply
 
 
 class LambdaSigValueEncoder(nn.Module):
-  def __init__(self, hidden_size):
+  def __init__(self, hidden_size, domain=None):
     super(LambdaSigValueEncoder, self).__init__()
+    self.domain = domain
     self.concrete_signature = Signature(deepcoder_propsig.CONCRETE_SIGNATURE_LENGTH)
     self.lambda_signature = Signature(deepcoder_propsig.LAMBDA_SIGNATURE_LENGTH)
     tuple_length = self.concrete_signature.tuple_length
@@ -470,7 +471,7 @@ class LambdaSigValueEncoder(nn.Module):
     list_normal_signatures = []
     for v in all_values:
       if not isinstance(v, value_module.FreeVariable):
-        signature = deepcoder_propsig.property_signature_value(v, output_values, fixed_length=True)
+        signature = deepcoder_propsig.property_signature_value(v, output_values, fixed_length=True, domain=self.domain)
         list_normal_signatures.append((v.num_free_variables, signature))
     all_embed = self.forward_with_signatures(all_values, device, list_normal_signatures)
     if need_signatures:

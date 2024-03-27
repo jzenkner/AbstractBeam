@@ -204,7 +204,7 @@ def dynamic_task_gen(args, domain, dreamcoder_train_tasks=None, split="train"):
         max_num_examples=args.max_num_examples,
         min_num_inputs=args.min_num_inputs,
         max_num_inputs=args.max_num_inputs,
-        timeout=args.data_gen_timeout + 30 * (len(domain.operations) - args.num_starting_ops),
+        timeout=args.data_gen_timeout + args.dynamic_time_increase * (len(domain.operations) - args.num_starting_ops),
         num_tasks_per_weight=args.num_tasks_per_weight,
         skip_probability=args.skip_probability,
         lambda_skip_probability=args.lambda_skip_probability,
@@ -222,8 +222,8 @@ def dynamic_task_gen(args, domain, dreamcoder_train_tasks=None, split="train"):
     total_num_tasks = 0
 
     signal.signal(signal.SIGALRM, timeout_handler)
-    print("Forced timouter will happen after ", args.data_gen_timeout * math.ceil(args.num_searches / args.num_datagen_proc) + 120 + 30 * (len(domain.operations) - args.num_starting_ops), " seconds")
-    signal.alarm(args.data_gen_timeout * math.ceil(args.num_searches / args.num_datagen_proc) + 120 + 30 * (len(domain.operations) - args.num_starting_ops))
+    print("Forced timouter will happen after ", args.data_gen_timeout * math.ceil(args.num_searches / args.num_datagen_proc) + 120 + args.dynamic_time_increase * (len(domain.operations) - args.num_starting_ops), " seconds")
+    signal.alarm(args.data_gen_timeout * math.ceil(args.num_searches / args.num_datagen_proc) + 120 + args.dynamic_time_increase * (len(domain.operations) - args.num_starting_ops))
 
     try:
         for local_tasks_by_weight in tqdm(pool.imap_unordered(worker_fun, seeds),

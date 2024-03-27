@@ -22,7 +22,7 @@ flags.DEFINE_integer('data_gen_seed', 1, 'Seed for data generation')
 flags.DEFINE_integer('shard_start_index', 0,
                      'starting index of shards for current job')
 flags.DEFINE_enum('domain', 'tuple',
-                  ['tuple', 'arithmetic', 'bustle', 'logic', 'deepcoder'],
+                  ['tuple', 'arithmetic', 'bustle', 'logic', 'deepcoder', "dreamcoder"],
                   'task domain')
 flags.DEFINE_string('data_save_dir', None, 'Where to save data')
 flags.DEFINE_string('split', 'train', 'the split for dataset generation')

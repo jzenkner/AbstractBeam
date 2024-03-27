@@ -16,6 +16,7 @@
 import json
 import argparse
 import functools
+import git
 import os
 import pickle
 from absl import app
@@ -35,10 +36,9 @@ from crossbeam.model.joint_model import JointModel, IntJointModel
 from crossbeam.model.logic_model import LogicModel
 from crossbeam.model.deepcoder_model import DeepCoderModel
 from crossbeam.model.util import CharacterTable
-from crossbeam.experiment.deepcoder.configs.baseline_eval import get_config
+from crossbeam.experiment.dreamcoder.configs.train.baseline import get_config
 
 FLAGS = flags.FLAGS
-
 config_flags.DEFINE_config_file(
     name='config',
     default=None,
@@ -50,7 +50,6 @@ flags.DEFINE_bool('random_beam', False, 'replace beam search with random choices
 flags.DEFINE_float('restarts_timeout', None, 'Timeout per random restart')
 flags.DEFINE_float('temperature', 1.0, 'Temperature for sampling or UR evaluation')
 flags.DEFINE_bool('synthetic_test_tasks', False, 'Use synthetic or handwritten test tasks.')
-
 
 def init_model(args, domain, model_type, ckpt_inventions=[]):
   """Initializes the model."""
@@ -84,7 +83,7 @@ def get_eval_tasks(config):
               else deepcoder_tasks.HANDWRITTEN_TASKS)
     eval_prefix = 'test-tasks'
   else:
-    eval_prefix = 'vaxid-'
+    eval_prefix = 'valid-'
   eval_files = os.listdir(config.data_folder)
   eval_files = [fname for fname in eval_files if fname.startswith(eval_prefix)]
   eval_tasks = []
@@ -96,36 +95,18 @@ def get_eval_tasks(config):
     random.shuffle(eval_tasks)
   return eval_tasks
 
-
-def get_dreamcoder_eval_tasks(testing = False):
-    Task = task_module.Task
-    with open("/work/ldierkes/repos/ma-lukas-dierkes/ec/data/list_tasks+bootstrap.json", 'r') as file:
-        data = json.load(file) 
-    data = [task for task in data if task["type"]["input"] == task["type"]["output"] == "list-of-int"] # 
-    names = [task["name"] for task in data]
-    inputs = [{"x1": [task["examples"][i]["i"] for i in range(len(task["examples"]))]} for task in data]
-    outputs = [[task["examples"][i]["o"] for i in range(len(task["examples"]))] for task in data]
-    eval_tasks = [Task(name = name, inputs_dict=inputs[i], outputs = outputs[i], solution=None) for i, name in enumerate(names) if inputs[i] != outputs[i]]
-    random.shuffle(eval_tasks)
-    if testing:
-      # take half 
-      eval_tasks = eval_tasks[:len(eval_tasks)//2]
-    else:
-      # take other half
-      eval_tasks = eval_tasks[len(eval_tasks)//2:]
-    return eval_tasks
-
-
 def main(argv):
+  repo_dir = git.Repo('.', search_parent_directories=True).working_tree_dir
+  
   del argv
-  if FLAGS.config is None: #: TODO: Config einbauen
+  if FLAGS.config is None: 
     config = FLAGS
     proc_args = argparse.Namespace(**FLAGS.flag_values_dict())
   else:
     config = configs_all.get_config()
-    config.update(get_config()) # FLAGS.config
+    config.update(FLAGS.config) # get_config() 
     proc_args = config
-    config.data_folder = os.path.join(config.data_root, config.data_name)
+  
   logging.info(proc_args)
   set_global_seed(config.seed)
   domain = domains.get_domain(config.domain)
@@ -151,17 +132,22 @@ def main(argv):
   else:
     model = init_model(config, domain, config.model_type, ckpt_inventions=[])
   
-  if config.dreamcoder:
+  if config.domain == "dreamcoder":
     if config.do_test:
       # Load tasks from pickle
-      with open("/work/ldierkes/repos/new/LambdaBeam/crossbeam/data/dreamcoder_test_tasks.pkl", 'rb') as file:
+      with open(repo_dir + "/crossbeam/data/dreamcoder/dreamcoder_test_tasks.pkl", 'rb') as file:
         original_tasks = pickle.load(file)
     else:
-      with open("/work/ldierkes/repos/new/LambdaBeam/crossbeam/data/dreamcoder_train_tasks.pkl", 'rb') as file:
+      with open(repo_dir + "/crossbeam/data/dreamcoder/dreamcoder_train_tasks.pkl", 'rb') as file:
         original_tasks = pickle.load(file)
-  else:
-    original_tasks = deepcoder_tasks.HANDWRITTEN_TASKS
-  print(len(original_tasks))
+  elif config.domain == "deepcoder":
+    original_tasks = deepcoder_tasks.HANDWRITTEN_TASKS # TODO: TRAIN TEST SPLIT
+
+  # count numbers in gpu_list
+  if config.gpu_list:
+    assert config.num_proc == len(config.gpu_list.split(',')) 
+
+
   print("config.save_dir", config.save_dir)
   print(f'Starting training, will save model dumps to {config.save_dir}')
   main_train_eval(proc_args, model,

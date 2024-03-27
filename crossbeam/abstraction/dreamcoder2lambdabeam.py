@@ -184,7 +184,9 @@ def correct_double_lam(result_string):
             new_tokens.insert(-1, a)
             new_tokens.append(":")
             skip = True
-        elif (token == ":" or token == "lambda" or token == "(" or (token[1:].isdigit() and token[0].isalpha())) and skip :
+        elif (token == ":" or token == "lambda" or token == "(" or (token[1:].isdigit() and token[0].isalpha() and not tokens[i+1] == "(")) and skip:
+            if token == ":":
+                skip = False
             if token == "(":
                 new_tokens.append("(")
             continue
@@ -197,6 +199,68 @@ def correct_double_lam(result_string):
     new_program = new_program.replace(":", ": ")
     new_program = new_program.replace(",", ", ")
     return new_program
+
+def reduce_variables(expr, missing_var):
+    # Regular expression pattern to match variables
+    pattern = r'\b(x)(\d+)\b'
+
+    def replace_variable(match):
+        prefix = match.group(1)
+        number = int(match.group(2))
+        if number > missing_var:
+            return f"{prefix}{number - 1}"
+        else:
+            return f"{prefix}{number}"
+
+
+    # Replace variables in the expression
+    incremented_expr = re.sub(pattern, replace_variable, expr)
+    return incremented_expr
+
+def check_variable_ordering(expr):
+    # Check if expression contains variables
+    variabeles = set(re.findall(r'\b(x)(\d+)\b', expr))
+    # concatenate tuples
+    variabeles = ["".join(var) for var in variabeles]
+    max_var = max([int(var[1]) for var in variabeles])
+    missing_vars = []
+    for i in range(1, max_var+1):
+        if str(i) not in [var[1] for var in variabeles]:
+            missing_vars.append(i)
+
+    # reverse the list
+    missing_vars = missing_vars[::-1]
+    for missing_var in missing_vars:
+        expr = reduce_variables(expr, missing_var)
+    else:
+        return expr
+
+
+def remove_outer_x_functions(result_string):
+    if result_string[0] == "x" and result_string[1].isdigit():
+
+        return result_string[3:-1]
+    return result_string
+
+
+def remove_unnecessary_x_functions(result_string):
+    pattern = r'x\d+\(x\d+\)'
+    matches = re.findall(pattern, result_string)
+    matches = list(set(matches))
+    for match in matches:
+        no_replacement = False
+        used_vars = match.split("(")
+        incomplete_result_string = result_string.replace(match, "")
+        for var in used_vars:
+            if var in incomplete_result_string:
+                no_replacement = True
+                break
+        if no_replacement:
+            continue
+        result_string = result_string.replace(match, match.split("(")[0])
+    
+    return result_string
+
 
 
 def parse_abstraction(abstraction, base_function_dict, higher_order_functions = {"Map": [1,0], "Fold": [2,0,0]}):
@@ -237,8 +301,6 @@ def parse_abstraction(abstraction, base_function_dict, higher_order_functions = 
             arguments_counter[token] = base_function_dict[token]
 
         elif token == "lam" or token == "lambda":
-
-                
             local_var_counter += 1
             local_var_parentheses.append(open_parentheses_count)
 
@@ -260,23 +322,11 @@ def parse_abstraction(abstraction, base_function_dict, higher_order_functions = 
 
             elif token[0] == "#":
                result_string += "x" + str(int(token[1:]) + 1)
-               """ 
-               if list(arguments_counter.items())[-1][0] in higher_order_functions.keys() and higher_order_functions[list(arguments_counter.items())[-1][0]][-int(list(arguments_counter.items())[-1][1])] > 0:
-                    if tokens[i-1] == "lam" or tokens[i-1] == "lambda":
-                        local_arity = higher_order_functions[list(arguments_counter.items())[-1][0]][-int(list(arguments_counter.items())[-1][1])]
-                        result_string += "x" + str(int(token[1:]) + 1) + "(" + ", ".join([str(local_vars[local_var_counter]) + str(i+1) for i in range(local_arity)]) + ")"
-                    else:
-                        local_arity = higher_order_functions[list(arguments_counter.items())[-1][0]][-int(list(arguments_counter.items())[-1][1])]
-                        result_string += "(lambda " + ", ".join([str(local_vars[local_var_counter + 1]) + str(i+1) for i in range(local_arity)]) + ": " + "x" + str(int(token[1:]) + 1) + "(" + ", ".join([str(local_vars[local_var_counter + 1]) + str(i+1) for i in range(local_arity)]) + "))"
-                else:
-                """
-                
-            
+               
             elif token[0] == "$":
                 if int(token[1:]) <= local_var_counter:
                     result_string += str(local_vars[local_var_counter - int(token[1:])]) + "1"
                 else:
-                    
                     result_string += "x" + str(int(token[1:]) - local_var_counter - 1 + max_hashtag_var + 2)
             
             if i != len(tokens)-1 and tokens[i+1] != ")" and tokens[i+1] != "," and tokens[i-1] != "(":
@@ -305,8 +355,17 @@ def parse_abstraction(abstraction, base_function_dict, higher_order_functions = 
     result_string = result_string.replace(":", ": ")
     result_string = result_string.replace(",", ", ")
 
+    # remove unnecessary x functions
+    result_string = remove_unnecessary_x_functions(result_string)
+
+    # check variable ordering
+    result_string = check_variable_ordering(result_string)
+
+    # calculate bound variables
     bound_variables_dict = calculate_bound_variables_dict(result_string, base_function_dict, higher_order_functions)
+    # correct double lambdas
     result_string = correct_double_lam(result_string)
+    
 
     return result_string, bound_variables_dict
 
@@ -471,7 +530,6 @@ def build_inventions(new_inventions, old_inventions, higher_order_functions, bas
     for invention in new_inventions:
         if dc_counter > max_invention:
             break
-        #try:
         print("abstraction:" , invention.body)
         try:
             lambdabeam_program, bound_variables_dict = parse_abstraction(invention.body, base_function_dict, higher_order_functions)
@@ -529,8 +587,6 @@ def build_inventions(new_inventions, old_inventions, higher_order_functions, bas
             optimizer = torch.optim.Adam(model.parameters(), lr=lr)
         added = True
         dc_counter += 1
-        
-
         
         # Add to domain:
         domain.operations.append(new_op)

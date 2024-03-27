@@ -52,6 +52,7 @@ class DeepCoderModel(nn.Module):
     self.embed_dim = args.embed_dim
     self.step_score_func = args.step_score_func
     self.score_normed = args.score_normed
+    self.domain = None
     
 
     if args.io_encoder == 'lambda_signature':
@@ -60,7 +61,7 @@ class DeepCoderModel(nn.Module):
       raise ValueError('unknown io encoder %s' % args.io_encoder)
 
     if args.value_encoder == 'lambda_signature':
-      val = LambdaSigValueEncoder(hidden_size=args.embed_dim)
+      val = LambdaSigValueEncoder(hidden_size=args.embed_dim, domain = self.domain)
     else:
       raise ValueError('unknown value encoder %s' % args.value_encoder)
     if args.encode_weight:

@@ -54,20 +54,44 @@ length signatures).
 
 import itertools
 from typing import Any, List, Optional, Tuple, Type, Union
-
+from absl import flags
 from crossbeam.dsl import deepcoder_operations
 from crossbeam.dsl import domains
 from crossbeam.dsl import value as value_module
+import sys
 
-DEFAULT_VALUES = {
-    bool: False,
-    int: 0,
-    list: [0],
-    type(None): None,
-}
+# Check command-line arguments
+if len(sys.argv) < 3:
+    print("Usage: python script.py [config_path] [domain]")
+    sys.exit(1)
 
-# DeepCoder only uses lambdas that take int(s) as input.
-VALUES_TO_TRY = {
+# Get the argument passed in the shell
+argument = sys.argv[2]
+
+if "deepcoder" in argument:
+  VALUES_TO_TRY = {
+    int: {
+        1: [-177, -84, -17, -3, -2, -1, 0, 1, 2, 3, 4, 5, 12, 47, 110, 213],
+        2: [[0, 0],
+            [0, -13],
+            [1, 5],
+            [2, 3],
+            [3, -1],
+            [4, 1],
+            [6, 0],
+            [12, 12],
+            [41, 4],
+            [104, -177],
+            [-1, 2],
+            [-2, -3],
+            [-4, 8],
+            [-17, -16],
+            [-76, 173],
+            [-200, -26]],
+    },
+  }
+elif "dreamcoder" in argument:
+  VALUES_TO_TRY = {
     int: {
         1: [-1, 0, 1, 2, 3, 4, 5, 12, [], [-1], [0], [1], [2], [12]],
         2: [[0, 0],
@@ -102,6 +126,15 @@ VALUES_TO_TRY = {
     }
   }
 
+
+
+
+DEFAULT_VALUES = {
+    bool: False,
+    int: 0,
+    list: [0],
+    type(None): None,
+}
 
 
 # The maximum number of inputs for a lambda Value or an I/O example, if
@@ -392,12 +425,15 @@ def _property_signature_concrete_value(
 
 def run_lambda(
     value: value_module.Value,
+    domain: Optional[str] = None
 ) -> Optional[List[Tuple[List[Any], Any, int]]]:
   """Runs a lambda on canonical values."""
   arity = value.num_free_variables
   assert arity > 0
   io_with_example_index_list = []
+
   to_try = VALUES_TO_TRY[int][arity]
+  
   
   if arity == 1:
     to_try = [[i] for i in to_try]
@@ -424,23 +460,28 @@ def is_value_valid(value: value_module.Value) -> bool:
   if not value.num_free_variables:
     return True
   if not hasattr(value, 'lambda_exec_results'):
-    value.lambda_exec_results = run_lambda(value)
+    value.lambda_exec_results = run_lambda(value, domain=None)
   return value.lambda_exec_results is not None
 
 
 def _property_signature_lambda(
     value: value_module.Value,
     output_value: value_module.Value,
-    fixed_length: bool = True) -> List[SignatureTupleType]:
+    fixed_length: bool = True, 
+    domain = None) -> List[SignatureTupleType]:
   """Returns a property signature for a lambda value."""
   if not hasattr(value, 'lambda_exec_results'):
-    value.lambda_exec_results = run_lambda(value)
+    value.lambda_exec_results = run_lambda(value, domain)
   io_with_example_index_list = value.lambda_exec_results
   if not io_with_example_index_list:
     # The lambda never ran successfully. We return all padding here, but such a
     # value shouldn't be kept in search.
     return [_REDUCED_PADDING] * LAMBDA_SIGNATURE_LENGTH
   signatures_to_reduce = []
+
+  to_try = VALUES_TO_TRY
+
+
   for inputs, output, example_index in io_with_example_index_list:
     signatures_to_reduce.append(
         _type_property(value) +
@@ -448,7 +489,7 @@ def _property_signature_lambda(
         _property_signature_single_example(
             inputs, output, fixed_length,
             fixed_num_inputs=FIXED_NUM_LAMBDA_INPUTS,
-            input_types=list(VALUES_TO_TRY),
+            input_types=list(to_try),
             include_input_basic_signatures=False))
   return _reduce_across_examples(signatures_to_reduce)
 
@@ -456,13 +497,14 @@ def _property_signature_lambda(
 def property_signature_value(
     value: value_module.Value,
     output_value: value_module.Value,
-    fixed_length: bool = True) -> List[SignatureTupleType]:
+    fixed_length: bool = True,
+    domain = None) -> List[SignatureTupleType]:
   """Returns a property signature for a Value w.r.t. to the output Value.
 
   Concrete values and lambda values will have signatures of different lengths.
   """
   if value.num_free_variables:
-    return _property_signature_lambda(value, output_value, fixed_length)
+    return _property_signature_lambda(value, output_value, fixed_length, domain)
   else:
     return _property_signature_concrete_value(value, output_value, fixed_length)
 

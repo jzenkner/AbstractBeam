@@ -9,3 +9,5 @@ tqdm
 ml_collections
 torch_scatter
 tensorboard
+git
+stitch_core

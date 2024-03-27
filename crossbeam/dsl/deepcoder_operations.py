@@ -558,9 +558,6 @@ class Filter(DeepCoderOperation):
     return [x for x, c in zip(xs, conditions) if c]
   
 
-
-  
-
 class Count(DeepCoderOperation):
   """DeepCoder's Count operation."""
 
@@ -638,22 +635,22 @@ def get_operations_():
 
 def get_operations():
   return [
-      Add(), # works
-      Subtract(), # works
-      Multiply(), # works 
-      Greater(), # works
-      Mod(), # works 
-      Equal(), # works
-      IsEmpty(), # works
-      IsSquare(), # works
-      IsPrime(), # works
-      If(), # works
-      Cdr(), # works
-      Car(), # works
-      Length(), #works
-      Cons(), # works
-      Index(), #works
-      Map(), # works
-      Fold(), # works   
+      Add(),
+      Subtract(),
+      Multiply(), 
+      Greater(),
+      Mod(), 
+      Equal(),
+      IsEmpty(),
+      IsSquare(),
+      IsPrime(),
+      If(),
+      Cdr(),
+      Car(),
+      Length(),
+      Cons(),
+      Index(),
+      Map(),
+      Fold(), 
   ]
 

@@ -217,12 +217,6 @@ def build_compression_programs(json_dict, base_function_dict, higher_order_funct
                 f.write(solution['solution'])
             continue
 
-        #entry = FrontierEntry(dreamcoder_program, logLikelihood=0, logPrior=0)
-        #name, input, output = parse_task_string(solution['task'])
-        #examples = combine_inputs_outputs(input, output)
-        #request =  arrow(tlist(tint), tlist(tint))
-        #frontiers.append(Frontier([entry], Task(name=name, request=request, examples=examples)))
-
         compression_programs.append(compression_program)
         tasks.append(task_name)
     return compression_programs, tasks, frontiers
