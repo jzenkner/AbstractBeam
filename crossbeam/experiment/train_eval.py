@@ -345,7 +345,7 @@ def train_eval_loop(args, device, model, trace_gen, checkpoint, original_tasks):
       for file in glob.glob(os.path.join(args.data_save_dir, "train-*.pkl")):
         os.remove(file)
       
-      repo_dir = git.Repo('.', search_parent_directories=True).working_tree_dir
+      repo_dir = os.getcwd()
       if dreamcoder_train_tasks is None and args.domain == "dreamcoder":
         with open(repo_dir + "/crossbeam/data/dreamcoder_train_tasks.pkl", "rb") as f:
             dreamcoder_train_tasks = cp.load(f)

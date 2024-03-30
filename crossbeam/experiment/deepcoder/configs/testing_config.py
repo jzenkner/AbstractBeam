@@ -9,7 +9,7 @@ def get_config():
   config.domain = 'deepcoder'
 
   # Data Generation
-  config.data_gen_timeout = 2
+  config.data_gen_timeout = 30
   config.max_num_examples = 5
   config.max_num_inputs = 3
   config.min_num_examples = 2
@@ -22,7 +22,7 @@ def get_config():
   config.lambda_skip_probability = 0.0
   config.lambda_fraction = 0.8
   config.shuffle_ops = False
-  config.data_save_dir = "/work/ldierkes/repos/new/LambdaBeam/outputs/testing/data"
+  config.data_save_dir = "/ceph/jzenkner/Code/AbstractBeam/outputs/testing/data"
   config.num_datagen_proc = 1
   config.data_gen_seed = 0
   config.num_searches = 1
@@ -56,8 +56,8 @@ def get_config():
   config.load_model = ''
   config.steps_per_curr_stage = 5000
   config.schedule_type = 'uniform'
-  config.json_results_file = "/work/ldierkes/repos/new/LambdaBeam/outputs/testing/results.json"
-  config.save_dir = "/work/ldierkes/repos/new/LambdaBeam/outputs/testing"
+  config.json_results_file = "/ceph/jzenkner/Code/AbstractBeam/outputs/testing/results.json"
+  config.save_dir = "/ceph/jzenkner/Code/AbstractBeam/outputs/testing"
 
   # Abstraction
   config.abstraction = True

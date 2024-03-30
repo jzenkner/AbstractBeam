@@ -18,12 +18,12 @@
 
 
 
-export CUDA_VISIBLE_DEVICES=${devices=0,1,2,3,4,5,6,7}
+export CUDA_VISIBLE_DEVICES=${devices=0,1,2,3}
 export CUDA_DEVICE_ORDER=PCI_BUS_ID
 
 echo "CUDA_VISIBLE_DEVICES: $CUDA_VISIBLE_DEVICES"
 python3 -m crossbeam.experiment.run_crossbeam \
-    --config="configs/testing_config.py" \
+    --config="crossbeam/experiment/deepcoder/configs/train/baseline.py" \
     --domain="deepcoder" \
 
 

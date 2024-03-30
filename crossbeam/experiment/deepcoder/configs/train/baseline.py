@@ -22,12 +22,12 @@ def get_config():
   config.lambda_skip_probability = 0.0
   config.lambda_fraction = 0.8
   config.shuffle_ops = False
-  config.data_save_dir = ""
+  config.data_save_dir = "neurips/lambdabeam/data"
   config.num_datagen_proc = 30
   config.data_gen_seed = 2
   config.num_searches = 300
   config.shard_size = 1000
-  config.dynamic_time_increase = 30.0 # Too less, need more
+  config.dynamic_time_increase = 30 # Too less, need more
 
   config.seed = 2
   config.tout = 3600
@@ -54,8 +54,8 @@ def get_config():
   config.load_model = ''
   config.steps_per_curr_stage = 10000
   config.schedule_type = 'uniform'
-  config.json_results_file = ""
-  config.save_dir = ""
+  config.json_results_file = "neurips/lambdabeam/results/run_1.json"
+  config.save_dir = "neurips/lambdabeam/models"
 
   # Abstraction
   config.abstraction = False

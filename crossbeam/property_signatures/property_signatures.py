@@ -60,13 +60,14 @@ from crossbeam.dsl import domains
 from crossbeam.dsl import value as value_module
 import sys
 
+
 # Check command-line arguments
 if len(sys.argv) < 3:
     print("Usage: python script.py [config_path] [domain]")
     sys.exit(1)
 
 # Get the argument passed in the shell
-argument = sys.argv[2]
+argument = sys.argv[2]  # when running from cmd line: sys.argv[2] else
 
 if "deepcoder" in argument:
   VALUES_TO_TRY = {
