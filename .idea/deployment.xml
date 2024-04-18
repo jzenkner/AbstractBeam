@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="jzenkner@dws-06.informatik.uni-mannheim.de:22 password (3)" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" autoUpload="Always" serverName="jzenkner@dws-07.informatik.uni-mannheim.de:22 password" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
+      <paths name="jzenkner@dws-04.informatik.uni-mannheim.de:22 password">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/ceph/jzenkner/Code/AbstractBeam" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="jzenkner@dws-06.informatik.uni-mannheim.de:22 password">
         <serverdata>
           <mappings>
@@ -16,6 +23,27 @@
           </mappings>
         </serverdata>
       </paths>
+      <paths name="jzenkner@dws-07.informatik.uni-mannheim.de:22 password">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/ceph/jzenkner/Code/AbstractBeam" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="jzenkner@dws-07.informatik.uni-mannheim.de:22 password (2)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/ceph/jzenkner/Code/AbstractBeam" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="jzenkner@dws-07.informatik.uni-mannheim.de:22 password (3)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/ceph/jzenkner/Code/AbstractBeam" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="jzenkner@dws-08.informatik.uni-mannheim.de:22 password (2)">
         <serverdata>
           <mappings>
@@ -24,6 +52,27 @@
         </serverdata>
       </paths>
       <paths name="jzenkner@dws-08.informatik.uni-mannheim.de:22 password (3)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/ceph/jzenkner/Code/AbstractBeam" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="jzenkner@dws-10.informatik.uni-mannheim.de:22 password">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/ceph/jzenkner/Code/AbstractBeam" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="jzenkner@dws-17.informatik.uni-mannheim.de:22 password (5)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/tmp/pycharm_project_246" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="jzenkner@dws-17.informatik.uni-mannheim.de:22 password (6)">
         <serverdata>
           <mappings>
             <mapping deploy="/ceph/jzenkner/Code/AbstractBeam" local="$PROJECT_DIR$" />

@@ -218,8 +218,12 @@ def reduce_variables(expr, missing_var):
     return incremented_expr
 
 def check_variable_ordering(expr):
+
     # Check if expression contains variables
     variabeles = set(re.findall(r'\b(x)(\d+)\b', expr))
+    if len(variabeles) == 0:
+        return expr
+
     # concatenate tuples
     variabeles = ["".join(var) for var in variabeles]
     max_var = max([int(var[1]) for var in variabeles])
@@ -291,7 +295,6 @@ def parse_abstraction(abstraction, base_function_dict, higher_order_functions = 
             if i != len(tokens)-1 and tokens[i+1] != ")" and tokens[i+1] != "," and tokens[i-1] != "(":
                 result_string += ","
 
-            
         elif token in base_function_dict.keys():
             result_string = result_string[:-1] + token + result_string[-1]
             if len(arguments_counter) > 0:
@@ -373,7 +376,7 @@ def parse_abstraction(abstraction, base_function_dict, higher_order_functions = 
 
         
 class Invented(DeepCoderOperation):
-  def __init__(self, arity, program, invention, dc_program = None, bound_variables = [], dc_prims = True, inventions = None): 
+  def __init__(self, arity, program, invention, dc_program = None, bound_variables = [], dc_prims = True, inventions = None):
     super(Invented, self).__init__(arity, num_bound_variables = bound_variables, inv_name = invention.name)
     self.program = program
     self.invention = invention
@@ -519,7 +522,7 @@ def get_outer_op(program, base_function_dict):
             return token
 
 
-def build_inventions(new_inventions, old_inventions, higher_order_functions, base_function_dict, model=None, optimizer=None, device=None, lr=None, initialization_method = "top", dc_abstractions = [], pruning = False, domain=None, max_invention = 15, inv_namespace = None):
+def build_inventions(new_inventions, old_inventions, higher_order_functions, base_function_dict, model=None, optimizer=None, device=None, lr=None, initialization_method = "top", dc_abstractions = [], pruning = False, domain=None, max_invention = 15, inv_namespace = None, abstraction_refinement=None):
     # rewrite new abstractions
     dc_counter = 0
 
@@ -534,6 +537,7 @@ def build_inventions(new_inventions, old_inventions, higher_order_functions, bas
         try:
             lambdabeam_program, bound_variables_dict = parse_abstraction(invention.body, base_function_dict, higher_order_functions)
         except Exception as e:
+            print(e)
             #save the invention which caused the error
             with open('d2l_errors.txt', 'w') as f:
                 print("Error in parsing abstraction:", invention.body, e)
@@ -557,7 +561,8 @@ def build_inventions(new_inventions, old_inventions, higher_order_functions, bas
                     continue
                 except:
                     continue
-        if single_operation_invention and contains_no_constants(lambdabeam_program) and pruning:
+
+        if single_operation_invention and contains_no_constants(lambdabeam_program) and pruning and abstraction_refinement:
             skipped_inventions[invention.name] = list(operations.keys())[0]
 
         for old_inv in old_inventions:

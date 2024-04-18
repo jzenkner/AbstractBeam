@@ -119,7 +119,6 @@ def perform_search(domain, min_weight, max_weight, num_examples, num_inputs,
         choices_with_lambda = choices_with_lambda[:target_num_with_lambda]
         choices_without_lambda = choices_without_lambda[
             :target_num_without_lambda]
-
       #print(f'Choosing {len(choices_with_lambda)} values with lambdas, and '
       #      f'{len(choices_without_lambda)} values without lambdas.')
       choices = choices_with_lambda + choices_without_lambda

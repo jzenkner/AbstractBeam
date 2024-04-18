@@ -83,7 +83,8 @@ class OperationBase(abc.ABC):
       try:
         results = [self.apply_single([value[i] for value in arg_values])
                    for i in range(num_examples)]
-      except Exception:  # pylint: disable=broad-except
+      except Exception as e:  # pylint: disable=broad-except
+        # test = [self.apply_single([value[i] for value in arg_values]) for i in range(num_examples)]
         return None
 
     else:
@@ -139,9 +140,10 @@ class OperationBase(abc.ABC):
 
       try:
         results = [eval(code, locals_dicts[i]) for i in range(num_examples)]  # pylint: disable=eval-used
-      except Exception:  # pylint: disable=broad-except
+      except Exception as e:  # pylint: disable=broad-except
         # Some exception occured in apply_single. This is ok, just throw out
         # this value.
+        # FIXME: for higher-order macros we end up here
         return None
 
     value = value_module.OperationValue(results, self, arg_values,

@@ -22,6 +22,7 @@ def get_config():
   config.lambda_skip_probability = 0.0
   config.lambda_fraction = 0.8
   config.shuffle_ops = False
+  config.abstraction_refinement = True
   config.data_save_dir = "/ceph/jzenkner/Code/AbstractBeam/outputs/testing/data"
   config.num_datagen_proc = 1
   config.data_gen_seed = 0

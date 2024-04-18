@@ -33,7 +33,7 @@ def run_program(program, inputs_dict, dreamcoder_prims = True, inventions = None
     inv_namespace = {}
   num_examples = len(inputs_dict[next(iter(inputs_dict))])
   for i in range(num_examples):
-    namespace = get_ops_namespace(dreamcoder_prims).copy()
+    namespace = get_ops_namespace(False).copy()
     if inv_namespace is not None or inv_namespace != {}:
         namespace = {**namespace, **inv_namespace}
     namespace.update({name: value[i] for name, value in inputs_dict.items()})

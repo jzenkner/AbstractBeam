@@ -146,7 +146,6 @@ def synthesize_baseline(task, domain, max_weight=10, timeout=5,
     _add_value_by_weight(values_by_weight,
                          value_module.InputVariable(input_value,
                                                     name=input_name))
-
   constants = domain.constants
   constants_extractor = domain.constants_extractor
   assert (constants is None) != (constants_extractor is None), (
@@ -198,7 +197,6 @@ def synthesize_baseline(task, domain, max_weight=10, timeout=5,
       remaining_weight = target_weight - op.weight - num_free_vars
       if remaining_weight - arity < 0:
         continue  # Not enough weight to use this op.
-
       # Enumerate ways of partitioning `remaining_weight` into `arity` positive
       # pieces.
       # Equivalently, partition `remaining_weight - arity` into `arity`
@@ -247,6 +245,8 @@ def synthesize_baseline(task, domain, max_weight=10, timeout=5,
             
             if value is None:
               continue
+            if "fn_" in str(op):
+              print(str(op))
             if value.num_free_variables == 0:
               if (domain.small_value_filter and
                   not all(domain.small_value_filter(v) for v in value.values)):
@@ -261,8 +261,8 @@ def synthesize_baseline(task, domain, max_weight=10, timeout=5,
               if not io_pairs_per_example:
                 # The lambda never ran successfully, so let's skip it.
                 continue
-            
             values_by_weight[target_weight][value] = value
+
             value_set.add(value)
             assert value.get_weight() == target_weight
             update_stats_value_kept(stats, value)

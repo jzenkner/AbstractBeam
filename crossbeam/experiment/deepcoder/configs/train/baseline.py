@@ -9,7 +9,7 @@ def get_config():
   config.domain = 'deepcoder'
 
   # Data Generation
-  config.data_gen_timeout = 1000
+  config.data_gen_timeout = 2500
   config.max_num_examples = 5
   config.max_num_inputs = 3 # DreamCoder Evaluation Tasks only have 1 input, DeepCoder can have multiple
   config.min_num_examples = 2
@@ -22,12 +22,13 @@ def get_config():
   config.lambda_skip_probability = 0.0
   config.lambda_fraction = 0.8
   config.shuffle_ops = False
+  config.abstraction_refinement = False
   config.data_save_dir = "neurips/lambdabeam/data"
   config.num_datagen_proc = 30
   config.data_gen_seed = 2
   config.num_searches = 300
   config.shard_size = 1000
-  config.dynamic_time_increase = 30 # Too less, need more
+  config.dynamic_time_increase = 200 # Too less, need more
 
   config.seed = 2
   config.tout = 3600
@@ -44,7 +45,7 @@ def get_config():
   config.port = '30008'
   config.use_ur = False
   config.do_test = False
-  config.timeout = 100
+  config.timeout = 200
   config.restarts_timeout = 10
   config.encode_weight = True
   config.train_steps = 10000000

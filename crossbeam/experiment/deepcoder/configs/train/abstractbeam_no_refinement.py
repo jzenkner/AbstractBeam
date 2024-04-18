@@ -9,7 +9,7 @@ def get_config():
   config.domain = 'deepcoder' # Domain, set to "deepcoder" or "dreamcoder"
 
   # Data Generation
-  config.data_gen_timeout = 2500 # Data generation timeout for one search - might need to be increased as bigger DSL
+  config.data_gen_timeout = 1500 # Data generation timeout for one search - might need to be increased as bigger DSL
   config.max_num_examples = 5 # Max number of examples per task
   config.max_num_inputs = 3 # Max number of input per task 
   config.min_num_examples = 2 # Min number of examples per task
@@ -23,12 +23,12 @@ def get_config():
   config.lambda_fraction = 0.8 # Percentage of tasks that need to include a lambda
   config.shuffle_ops = True # Shuffle operations before running search
   config.abstraction_refinement = True
-  config.data_save_dir = "neurips/abstractbeam/data3" # Directory to save data
+  config.data_save_dir = "neurips/abstractbeam_no_refine/data" # Directory to save data
   config.num_datagen_proc = 30 # Number of parallel processes
   config.data_gen_seed = 2 # Data Generation Seed (will be incremented every iteration automatically)
   config.num_searches = 300 # Number of searches that will be performed
   config.shard_size = 1000 # Max number of tasks that are stored per file 
-  config.dynamic_time_increase = 200 # Time increasment for newfound operations
+  config.dynamic_time_increase = 30 # Time increasment for newfound operations
 
   config.seed = 2 # Random seed for Unique Randomizer
   config.tout = 3600 # Obsolete (will be removed in future versions)
@@ -45,18 +45,18 @@ def get_config():
   config.port = '30008' # Port for distributed training (sometimes it helped to updated this one when error occurs during training)
   config.use_ur = False # Unique Randomizer, if set to False, beam search will be used during training
   config.do_test = False # Test evaluation
-  config.timeout = 200 # Max evaluation timeout for one task
+  config.timeout = 150 # Max evaluation timeout for one task
   config.restarts_timeout = 10 # Time for each search (100 / 10 --> 10 restarts)
   config.encode_weight = True # Encode the weight of a intermediate value (e.g. Add(1, 2) has weight 3) --> show how "costly" a produced value is
   config.train_steps = 10000000 # Maximal train steps (will not be reached :))
   config.random_beam = False # I think is not implemented --> cannot be used
   config.use_op_specific_lstm = True # If True, every operation has its own Argument Selector Module (never tried setting to False)
   config.lr = 5e-4 # Learning rate
-  config.load_model = 'model-latest.ckpt' # Leave empty
+  config.load_model = '' # Leave empty
   config.steps_per_curr_stage = 10000 # Parameter from LambdaBeam, we dont use this
   config.schedule_type = 'uniform' # Schedule type for task ordering
-  config.json_results_file = "neurips/abstractbeam/results2/run_1.json" # File to save results
-  config.save_dir = "/ceph/jzenkner/Code/AbstractBeam/neurips/abstractbeam/models" # Directory to save model
+  config.json_results_file = "neurips/abstractbeam_no_refine/results/run_1.json" # File to save results
+  config.save_dir = "neurips/abstractbeam_no_refine/models" # Directory to save model
 
   # Abstraction
   config.abstraction = True # Abstraction usage
@@ -64,7 +64,7 @@ def get_config():
   config.dynamic_tasks = True # Dynamic tasks Generation 
   config.use_ur_in_valid = True # Unique Randomizer in validation
   config.initialization_method = "top" # Initialization method for abstraction models
-  config.abstraction_pruning = True # Abstraction pruning, throw away useless abstractions like Add(x1, x2)
+  config.abstraction_pruning = False # Abstraction pruning, throw away useless abstractions like Add(x1, x2)
   config.top_k = 2 # Top k shortest program that will be used for abstraction phase 
   config.num_inventions_per_iter = 999 # How many abstraction should be build
   config.invention_arity = 3 # Arity of the invented operations
