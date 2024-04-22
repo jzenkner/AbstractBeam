@@ -79,6 +79,7 @@ class OperationBase(abc.ABC):
     easy_case = (not self.has_any_bound_variables and
                  not any(x for x in arg_variables) and
                  not free_variables)
+
     if easy_case:
       try:
         results = [self.apply_single([value[i] for value in arg_values])

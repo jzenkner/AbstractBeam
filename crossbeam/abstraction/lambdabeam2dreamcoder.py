@@ -12,8 +12,6 @@ def convert(program, function_dict, higher_order_functions):
         if char.isdigit() and program[i-1] == "x":
             if int(char) > highest_var_number:
                 highest_var_number = int(char)
-
-
     for token in tokens:
         if token.isalpha() and len(token) == 1:
             # replace token in list

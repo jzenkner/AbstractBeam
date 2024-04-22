@@ -434,8 +434,7 @@ def run_lambda(
   io_with_example_index_list = []
 
   to_try = VALUES_TO_TRY[int][arity]
-  
-  
+
   if arity == 1:
     to_try = [[i] for i in to_try]
   for try_index, inputs_list in enumerate(to_try):

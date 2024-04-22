@@ -121,7 +121,7 @@ def synthesize_baseline(task, domain, max_weight=10, timeout=5,
                         skip_probability=0, lambda_skip_probability=0,
                         shuffle_ops=False):
   """Synthesizes a solution using normal bottom-up enumerative search."""
-
+  actions_used = {act: False for act in domain.operations}
   gc.collect()
   start_time = timeit.default_timer()
   end_time = start_time + timeout if timeout else None
@@ -245,8 +245,6 @@ def synthesize_baseline(task, domain, max_weight=10, timeout=5,
             
             if value is None:
               continue
-            if "fn_" in str(op):
-              print(str(op))
             if value.num_free_variables == 0:
               if (domain.small_value_filter and
                   not all(domain.small_value_filter(v) for v in value.values)):
@@ -266,4 +264,5 @@ def synthesize_baseline(task, domain, max_weight=10, timeout=5,
             value_set.add(value)
             assert value.get_weight() == target_weight
             update_stats_value_kept(stats, value)
+            actions_used[op] = True
   return None, value_set, values_by_weight, stats

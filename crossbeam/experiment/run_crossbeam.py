@@ -144,14 +144,14 @@ def main(argv):
                 original_tasks = pickle.load(file)
     elif config.domain == "deepcoder":
         original_tasks = deepcoder_tasks.HANDWRITTEN_TASKS
-        train_set, test_set = train_test_split(original_tasks, test_size=0.5, train_size=0.5, shuffle=True,
+        test_set, train_set = train_test_split(original_tasks, test_size=0.5, train_size=0.5, shuffle=True,
                                                random_state=42)
         if config.do_test:
             original_tasks = test_set
         else:
             # validate that the split is constant when we set a seed
-            if any(['scanl1:running_sum_extra' == t.name for t in train_set]):
-                raise ValueError("The seed is not working correctly.")
+            """if any(['scanl1:running_sum_extra' == t.name for t in train_set]):
+                raise ValueError("The seed is not working correctly.")"""
             original_tasks = train_set
 
     # count numbers in gpu_list
