@@ -9,7 +9,7 @@ def get_config():
   config.domain = 'deepcoder'
 
   # Data Generation
-  config.data_gen_timeout = 1500
+  config.data_gen_timeout = 1000
   config.max_num_examples = 5
   config.max_num_inputs = 3 # DreamCoder Evaluation Tasks only have 1 input, DeepCoder can have multiple
   config.min_num_examples = 2
@@ -23,7 +23,7 @@ def get_config():
   config.lambda_fraction = 0.8
   config.shuffle_ops = False
   config.abstraction_refinement = False
-  config.data_save_dir = "neurips/lambdabeam/data"
+  config.data_save_dir = "neurips/lambdabeam/data2"
   config.num_datagen_proc = 30
   config.data_gen_seed = 2
   config.num_searches = 300
@@ -55,8 +55,8 @@ def get_config():
   config.load_model = 'model-latest.ckpt'
   config.steps_per_curr_stage = 10000
   config.schedule_type = 'uniform'
-  config.json_results_file = "neurips/lambdabeam/results/run_1.json"
-  config.save_dir = "/ceph/jzenkner/Code/AbstractBeam/neurips/lambdabeam/models"
+  config.json_results_file = "neurips/lambdabeam/results2/run_1.json"
+  config.save_dir = "/ceph/jzenkner/Code/AbstractBeam/neurips/lambdabeam/models2"
 
   # Abstraction
   config.abstraction = False
@@ -71,4 +71,5 @@ def get_config():
   config.invention_arity = 3 
   config.used_invs = None
   config.max_invention = 999
+  config.castrate_macros = False
   return config

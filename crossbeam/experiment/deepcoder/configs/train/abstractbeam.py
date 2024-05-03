@@ -14,21 +14,21 @@ def get_config():
   config.max_num_inputs = 3 # Max number of input per task 
   config.min_num_examples = 2 # Min number of examples per task
   config.min_num_inputs = 1 # Min number of inputs per task
-  config.max_search_weight = 20 # Max program length until search is stopped (20 will not be reached due to data_gen_timeout) 
+  config.max_search_weight = 10 # Max program length until search is stopped (20 will not be reached due to data_gen_timeout)
   config.min_task_weight = 3 # Minimum program length
-  config.max_task_weight = 15 # Max program length until search is stopped (20 will not be reached due to data_gen_timeout)
+  config.max_task_weight = 10 # Max program length until search is stopped (20 will not be reached due to data_gen_timeout)
   config.num_tasks_per_weight = 800 # Number of tasks per weight that will be sampled per search
   config.skip_probability = 0.0 # Skip probability for tasks not including lambdas (never used that)
   config.lambda_skip_probability = 0.0  #Skip probability for tasks including lambdas (never used that)
   config.lambda_fraction = 0.8 # Percentage of tasks that need to include a lambda
   config.shuffle_ops = True # Shuffle operations before running search
   config.abstraction_refinement = True
-  config.data_save_dir = "neurips/abstractbeam/data" # Directory to save data
+  config.data_save_dir = "neurips/abstractbeam/data5" # Directory to save data
   config.num_datagen_proc = 30 # Number of parallel processes
   config.data_gen_seed = 2 # Data Generation Seed (will be incremented every iteration automatically)
   config.num_searches = 300 # Number of searches that will be performed
   config.shard_size = 1000 # Max number of tasks that are stored per file 
-  config.dynamic_time_increase = 200 # Time increasment for newfound operations
+  config.dynamic_time_increase = 800 # Time increasment for newfound operations
 
   config.seed = 2 # Random seed for Unique Randomizer
   config.tout = 3600 # Obsolete (will be removed in future versions)
@@ -38,7 +38,7 @@ def get_config():
   config.grad_accumulate = 4 # Gradient accumulation across searches. 
   config.beam_size = 10  # Beam size for beam search 
   config.num_proc = 4 # Number of GPUs
-  config.gpu_list = '0, 1, 2, 3' # GPU List
+  config.gpu_list = '0,1,2,3' # GPU List
   config.gpu = 1 # Master GPU
   config.embed_dim = 128 # Embedding dimension
   config.eval_every = 10000 # Number of train steps until eval + abstraction will be run
@@ -55,8 +55,8 @@ def get_config():
   config.load_model = 'model-latest.ckpt'  # Leave empty
   config.steps_per_curr_stage = 10000 # Parameter from LambdaBeam, we dont use this
   config.schedule_type = 'uniform' # Schedule type for task ordering
-  config.json_results_file = "neurips/abstractbeam/results/run_1.json" # File to save results
-  config.save_dir = "/ceph/jzenkner/Code/AbstractBeam/neurips/abstractbeam/models" # Directory to save model
+  config.json_results_file = "neurips/abstractbeam/results5/run_1.json" # File to save results
+  config.save_dir = "/ceph/jzenkner/Code/AbstractBeam/neurips/abstractbeam/models5" # Directory to save model
 
   # Abstraction
   config.abstraction = True # Abstraction usage
@@ -70,4 +70,5 @@ def get_config():
   config.invention_arity = 2 # Arity of the invented operations
   config.used_invs = None # If u want to exclude inventions from the search, e.g. during testing only use abstractions that found during training
   config.max_invention = 999 # How many abstractions should be kept (top once are kept)
+  config.castrate_macros = False
   return config

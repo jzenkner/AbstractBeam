@@ -22,7 +22,7 @@ def get_config():
   config.lambda_skip_probability = 0.0
   config.lambda_fraction = 0.8
   config.shuffle_ops = False
-  config.data_save_dir = "/work/ldierkes/repos/new/LambdaBeam/outputs/beamstract/data"
+  config.data_save_dir = "../../neurips/abstractbeam/eval/data"
   config.num_datagen_proc = 35
   config.data_gen_seed = 0
   config.num_searches = 350
@@ -36,8 +36,8 @@ def get_config():
   config.grad_accumulate = 4
   config.beam_size = 10
   config.num_proc = 1
-  config.gpu_list = '5'
-  config.gpu = 5
+  config.gpu_list = '0'
+  config.gpu = 0
   config.embed_dim = 128
   config.eval_every = 10000
   config.num_valid = 76
@@ -56,8 +56,8 @@ def get_config():
   config.load_model = ''
   config.steps_per_curr_stage = 5000
   config.schedule_type = 'uniform'
-  config.json_results_file = "/work/ldierkes/repos/new/LambdaBeam/outputs/beamstract/eval/results.json"
-  config.save_dir = "/work/ldierkes/repos/new/LambdaBeam/outputs/beamstract/"
+  config.json_results_file = "../../neurips/abstractbeam/eval/results.json"
+  config.save_dir = "../../neurips/abstractbeam/models/"
 
   # Abstraction
   config.abstraction = True
@@ -72,4 +72,5 @@ def get_config():
   config.invention_arity = 3
   config.max_invention = 99
   config.used_invs = None
+  config.castrate_macros = False
   return config

@@ -65,13 +65,16 @@ def _end_index(tokens, start_index):
   return i
 
 
-def solution_weight(solution: str) -> int:
+def solution_weight(solution: str, domain=None) -> int:
   """Counts the weight of a solution."""
   # This implementation assumes the solution is either short-form (without `v1`
   # or `v2` variables) or long-form (with those variables), and syntactically
   # correct. It might not detect cases where the solution has syntax errors.
   long_form = re.search(r'v\d', solution)
-  operation_names = {op.name for op in deepcoder_operations.get_operations()}
+  if domain:
+    operation_names = {op.name for op in domain.operations}
+  else:
+    operation_names = {op.name for op in deepcoder_operations.get_operations()}
   for c in ['(', ')', ',', ':']:
     solution = solution.replace(c, f' {c} ')
   tokens = solution.split()

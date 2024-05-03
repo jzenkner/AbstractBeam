@@ -65,6 +65,20 @@
           </mappings>
         </serverdata>
       </paths>
+      <paths name="jzenkner@dws-15.informatik.uni-mannheim.de:22 password">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/ceph/jzenkner/Code/AbstractBeam" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="jzenkner@dws-16.informatik.uni-mannheim.de:22 password">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/ceph/jzenkner/Code/AbstractBeam" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="jzenkner@dws-17.informatik.uni-mannheim.de:22 password (5)">
         <serverdata>
           <mappings>
