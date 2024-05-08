@@ -52,11 +52,11 @@ def get_config():
   config.random_beam = False # I think is not implemented --> cannot be used
   config.use_op_specific_lstm = True # If True, every operation has its own Argument Selector Module (never tried setting to False)
   config.lr = 5e-4 # Learning rate
-  config.load_model = 'model-latest.ckpt'  # Leave empty
+  config.load_model = ''  # Leave empty
   config.steps_per_curr_stage = 10000 # Parameter from LambdaBeam, we dont use this
   config.schedule_type = 'uniform' # Schedule type for task ordering
   config.json_results_file = "neurips/abstractbeam/results5/run_1.json" # File to save results
-  config.save_dir = "/ceph/jzenkner/Code/AbstractBeam/neurips/abstractbeam/models5" # Directory to save model
+  config.save_dir = "neurips/abstractbeam/models5" # Directory to save model
 
   # Abstraction
   config.abstraction = True # Abstraction usage

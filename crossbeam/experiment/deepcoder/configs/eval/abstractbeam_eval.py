@@ -56,8 +56,8 @@ def get_config():
   config.load_model = ''
   config.steps_per_curr_stage = 5000
   config.schedule_type = 'uniform'
-  config.json_results_file = "../../neurips/abstractbeam/eval/results.json"
-  config.save_dir = "../../neurips/abstractbeam/models/"
+  config.json_results_file = "../neurips/abstractbeam/eval/results_synthetic.json"
+  config.save_dir = "../neurips/abstractbeam/models"
 
   # Abstraction
   config.abstraction = True
