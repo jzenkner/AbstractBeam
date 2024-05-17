@@ -5,7 +5,6 @@ This repository contains the source code associated with the paper submited to N
 In this research project, we aim to reduce the search space blowup in Program Synthesis. For this purpose, we train a neural model to learn a search
 policy for bottom-up execution-guided program synthesis and extend it using DSL Enhancement.
 
-To cite this work, you can use the following BibTeX entry:
 
 
 ## Setup
