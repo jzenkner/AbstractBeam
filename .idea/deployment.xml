@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="jzenkner@dws-07.informatik.uni-mannheim.de:22 password" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" autoUpload="Always" serverName="jzenkner@dws-08.informatik.uni-mannheim.de:22 password (3)" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
+      <paths name="inestp01@dws-student-01.informatik.uni-mannheim.de">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/ceph/inestp01/AbstractBeam" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="jzenkner@dws-04.informatik.uni-mannheim.de:22 password">
         <serverdata>
           <mappings>

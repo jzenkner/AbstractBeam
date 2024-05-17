@@ -23,7 +23,6 @@ cycler==0.12.1
 debugpy==1.8.1
 decorator==5.1.1
 defusedxml==0.7.1
-dill @ file:///croot/dill_1692271232022/work
 exceptiongroup==1.2.0
 executing==2.0.1
 fastjsonschema==2.19.1
@@ -157,8 +156,6 @@ threadpoolctl==3.4.0
 tikzplotlib==0.10.1
 tinycss2==1.2.1
 tomli==2.0.1
-torch==2.2.1
-torch-scatter==2.1.2
 tornado==6.4
 tqdm==4.66.2
 traitlets==5.14.2

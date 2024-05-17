@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="5c645e03-3748-48b6-8db3-8dbd3077732c" name="inestp01@dws-student-01.informatik.uni-mannheim.de">
+        <fileTransfer accessType="SFTP" sshConfigId="45ed3bd1-8841-4ead-9e8d-607d94c5b9a5" sshConfig="inestp01@dws-student-01.informatik.uni-mannheim.de">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

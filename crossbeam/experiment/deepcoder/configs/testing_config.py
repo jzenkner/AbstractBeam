@@ -23,7 +23,7 @@ def get_config():
   config.lambda_fraction = 0.8
   config.shuffle_ops = False
   config.abstraction_refinement = True
-  config.data_save_dir = "/ceph/jzenkner/Code/AbstractBeam/outputs/testing/data"
+  config.data_save_dir = "../outputs/testing/data"
   config.num_datagen_proc = 1
   config.data_gen_seed = 0
   config.num_searches = 1
@@ -57,8 +57,8 @@ def get_config():
   config.load_model = ''
   config.steps_per_curr_stage = 5000
   config.schedule_type = 'uniform'
-  config.json_results_file = "/ceph/jzenkner/Code/AbstractBeam/outputs/testing/results.json"
-  config.save_dir = "/ceph/jzenkner/Code/AbstractBeam/outputs/testing"
+  config.json_results_file = "../outputs/testing/results.json"
+  config.save_dir = "../outputs/testing"
 
   # Abstraction
   config.abstraction = True

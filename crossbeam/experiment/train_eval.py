@@ -254,7 +254,7 @@ def train_eval_loop(args, device, model, trace_gen, checkpoint, original_tasks):
         dc_abstractions = []
         domain = domains.get_domain(args.domain)
         frontiers = {}
-
+    print(domain)
     eval_func = functools.partial(do_eval,
                                   max_search_weight=args.max_search_weight,
                                   beam_size=args.beam_size,
@@ -274,6 +274,7 @@ def train_eval_loop(args, device, model, trace_gen, checkpoint, original_tasks):
         assert args.num_proc == 1
         print('Doing test only!')
         model = model.to(device)
+        print(domain)
         succ, json_dict = eval_func(original_tasks, domain, model, verbose=True, inventions=inventions)
         if args.json_results_file:
             with open(args.json_results_file, 'w') as f:

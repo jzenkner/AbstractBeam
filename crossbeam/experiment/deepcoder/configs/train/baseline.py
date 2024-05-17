@@ -23,13 +23,12 @@ def get_config():
   config.lambda_fraction = 0.8
   config.shuffle_ops = False
   config.abstraction_refinement = False
-  config.data_save_dir = "neurips/lambdabeam/data4"
+  config.data_save_dir = "neurips/lambdabeam/ogdomain/data"
   config.num_datagen_proc = 30
   config.data_gen_seed = 2
   config.num_searches = 300
   config.shard_size = 1000
-  config.dynamic_time_increase = 200 # Too less, need more
-
+  config.dynamic_time_increase = 100
   config.seed = 2
   config.tout = 3600
   config.io_encoder = 'lambda_signature'
@@ -42,7 +41,7 @@ def get_config():
   config.gpu = 1
   config.embed_dim = 128
   config.eval_every = 10000
-  config.port = '30008'
+  config.port = '12121'
   config.use_ur = False
   config.do_test = False
   config.timeout = 200
@@ -55,8 +54,8 @@ def get_config():
   config.load_model = ''
   config.steps_per_curr_stage = 10000
   config.schedule_type = 'uniform'
-  config.json_results_file = "neurips/lambdabeam/results4/run_1.json"
-  config.save_dir = "neurips/lambdabeam/models4"
+  config.json_results_file = "neurips/lambdabeam/ogdomain/results/run_1.json"
+  config.save_dir = "neurips/lambdabeam/ogdomain/models"
 
   # Abstraction
   config.abstraction = False

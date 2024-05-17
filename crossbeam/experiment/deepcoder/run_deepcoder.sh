@@ -16,12 +16,12 @@
 
 
 
-export CUDA_VISIBLE_DEVICES=${devices=0,1,2,3}
+export CUDA_VISIBLE_DEVICES=${devices=0,1}
 export CUDA_DEVICE_ORDER=PCI_BUS_ID
 
 echo "CUDA_VISIBLE_DEVICES: $CUDA_VISIBLE_DEVICES"
 python3 -m crossbeam.experiment.run_crossbeam \
-    --config="crossbeam/experiment/deepcoder/configs/eval/abstractbeam_eval.py" \
+    --config="./crossbeam/experiment/deepcoder/configs/eval/abstractbeam_eval.py" \
     --domain="deepcoder" \
 
 

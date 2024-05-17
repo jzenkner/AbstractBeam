@@ -23,12 +23,12 @@ def get_config():
   config.lambda_fraction = 0.8 # Percentage of tasks that need to include a lambda
   config.shuffle_ops = True # Shuffle operations before running search
   config.abstraction_refinement = True
-  config.data_save_dir = "neurips/abstractbeam/data5" # Directory to save data
+  config.data_save_dir = "neurips/abstractbeam/ogdomain/data2" # Directory to save data
   config.num_datagen_proc = 30 # Number of parallel processes
   config.data_gen_seed = 2 # Data Generation Seed (will be incremented every iteration automatically)
   config.num_searches = 300 # Number of searches that will be performed
   config.shard_size = 1000 # Max number of tasks that are stored per file 
-  config.dynamic_time_increase = 800 # Time increasment for newfound operations
+  config.dynamic_time_increase = 100 # Time increasment for newfound operations
 
   config.seed = 2 # Random seed for Unique Randomizer
   config.tout = 3600 # Obsolete (will be removed in future versions)
@@ -37,12 +37,12 @@ def get_config():
   config.value_encoder = 'lambda_signature' # Encoder for values
   config.grad_accumulate = 4 # Gradient accumulation across searches. 
   config.beam_size = 10  # Beam size for beam search 
-  config.num_proc = 4 # Number of GPUs
-  config.gpu_list = '0,1,2,3' # GPU List
+  config.num_proc = 2 # Number of GPUs
+  config.gpu_list = '0,1' # GPU List
   config.gpu = 1 # Master GPU
   config.embed_dim = 128 # Embedding dimension
   config.eval_every = 10000 # Number of train steps until eval + abstraction will be run
-  config.port = '30008' # Port for distributed training (sometimes it helped to updated this one when error occurs during training)
+  config.port = '56565' # Port for distributed training (sometimes it helped to updated this one when error occurs during training)
   config.use_ur = False # Unique Randomizer, if set to False, beam search will be used during training
   config.do_test = False # Test evaluation
   config.timeout = 100 # Max evaluation timeout for one task
@@ -55,8 +55,8 @@ def get_config():
   config.load_model = ''  # Leave empty
   config.steps_per_curr_stage = 10000 # Parameter from LambdaBeam, we dont use this
   config.schedule_type = 'uniform' # Schedule type for task ordering
-  config.json_results_file = "neurips/abstractbeam/results5/run_1.json" # File to save results
-  config.save_dir = "neurips/abstractbeam/models5" # Directory to save model
+  config.json_results_file = "neurips/abstractbeam/ogdomain/results2/run_1.json" # File to save results
+  config.save_dir = "neurips/abstractbeam/ogdomain/models2" # Directory to save model
 
   # Abstraction
   config.abstraction = True # Abstraction usage

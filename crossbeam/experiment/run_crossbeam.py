@@ -128,6 +128,7 @@ def main(argv):
         ckpt = None
 
     domain = ckpt["domain"] if ckpt is not None else domain
+    print(domain.constants)
 
     if ckpt is not None:
         model = init_model(config, domain, config.model_type, ckpt["inventions"])
@@ -143,10 +144,10 @@ def main(argv):
             with open(repo_dir + "/crossbeam/data/dreamcoder/dreamcoder_train_tasks.pkl", 'rb') as file:
                 original_tasks = pickle.load(file)
     elif config.domain == "deepcoder":
-        original_tasks = deepcoder_tasks.SYNTHETIC_TASKS
-        test_set = original_tasks
-        """train_set, test_set = train_test_split(original_tasks, test_size=0.5, train_size=0.5, shuffle=True,
-                                               random_state=42)"""
+        original_tasks = deepcoder_tasks.HANDWRITTEN_TASKS
+        test_set, train_set = train_test_split(original_tasks, test_size=0.5, train_size=0.5, shuffle=True,
+                                               random_state=42)
+        # test_set = original_tasks
         if config.do_test:
             original_tasks = test_set
         else:
