@@ -33,6 +33,13 @@ neurips/lambdabeam/data
 neurips/lambdabeam/models
 neurips/lambdabeam/results
 neurips/plots
+filter_training_data.py
+crossbeam/experiment/dreamcoder
+checkpoints.ipynb
+abstraction_debugging.ipynb
+error.txt
+.idea
+.git
 
 
 /outputs/all_inventions/

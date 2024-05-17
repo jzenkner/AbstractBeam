@@ -45,7 +45,7 @@ def generate_data(index):
     )
 
 if __name__ == "__main__":
-    data_dir = "/work/ldierkes/repos/ma-lukas-dierkes/ec/LambdaBeam/my_data/"
+    data_dir = "./data/"
     tout = 3600
     maxw = 12
     maxne = 5
