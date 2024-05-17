@@ -8,8 +8,9 @@ policy for bottom-up execution-guided program synthesis and extend it using DSL 
 
 
 ## Setup
-
-For dependencies, first install the packages in the requirements file, e.g.:
+Make sure to install pytorch and pytorch-scatter.
+We used torch==2.2.1 and torch-scatter==2.1.2.
+Then install the packages in the requirements file, e.g.:
 ```
 pip install -r requirements.txt
 ```
