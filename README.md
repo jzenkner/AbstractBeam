@@ -19,20 +19,11 @@ The synthetic training data is saved to  `./neurips/abstractbeam/data` and  `./n
 Make sure to also create `./neurips/abstractbeam/models` and `./neurips/abstractbeam/results` directories. Same goes when you want to train the LambdaBeam benchmark.
 
 ## Train the model
-Navigate to `crossbeam/experiment/deepcoder` directory, make any necessary edits
-to `run_deepcoder.sh` including the data, model, and result folder and number of GPUs to use.
-To train a model run below from the project's root:
-
-```
-./crossbeam/experiment/deepcoder/run_deepcoder.sh
-```
-
-The default hyperparameters should mirror the settings in the paper.
-
-## Evaluating the trained models
-Adapt `./crossbeam/experiment/deepcoder/run_deepcoder.sh` by changing the training configs to the evaluation configs.
-Also make sure to create a models, data, and results directory in `./neurips/abstractbeam/eval/` or `./neurips/lambdabeam/eval/`.
-From the root directory, run:
+Navigate to `crossbeam/experiment/deepcoder` directory, and select the config you want to run.
+Just adapt the config path to point to `./crossbeam/experiment/deepcoder/configs/` + [`train/abstractbeam.py`, `train/baseline.py`, `eval/abstractbeam_eval.py`, `eval/lambdabeam_eval.py`].
+You can make any necessary edits to the selected config file including the data, model, and result directories.
+Moreover, you can adapt the hyperparameters, e.g., the enumeration timeout, number of GPUs to use, ... .
+To start run below from the project's root (the number of GPUs set in the config file must align with the number selected in below script):
 
 ```
 ./crossbeam/experiment/deepcoder/run_deepcoder.sh
