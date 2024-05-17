@@ -15,8 +15,8 @@ neurips/abstractbeam/models2
 neurips/abstractbeam/models5
 neurips/abstractbeam/results
 neurips/abstractbeam/ogdomain/models5
-neurips/abstractbeam/ogdomain/models/logs/
-neurips/abstractbeam/ogdomain/models2/logs/
+neurips/abstractbeam/ogdomain/models/logs/*
+neurips/abstractbeam/ogdomain/models2/logs/*
 neurips/abstractbeam/ogdomain/results/*
 neurips/abstractbeam/ogdomain/results2/*
 neurips/bwUNI
@@ -24,4 +24,12 @@ neurips/lambdabeam/data
 neurips/lambdabeam/models
 neurips/lambdabeam/results
 
+
+/outputs/all_inventions/
+/outputs/abstractbeam/
+/outputs/figures/
+/outputs/baseline/
+/outputs/testing/logs/
+/outputs/testing/model-best-valid.ckpt
+/outputs/testing/results.json
 
