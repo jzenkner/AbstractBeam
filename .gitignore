@@ -20,9 +20,19 @@ neurips/abstractbeam/ogdomain/models2/logs/*
 neurips/abstractbeam/ogdomain/results/*
 neurips/abstractbeam/ogdomain/results2/*
 neurips/bwUNI
+docs/config_parameters.md
+docs/ablation.ipynb
+docs/checkpoint.ipynb
+docs/data_check.ipynb
+docs/dfmerged.csv
+docs/stitch
+playground.ipynb
+plotting.ipynb
+double_blind.py
 neurips/lambdabeam/data
 neurips/lambdabeam/models
 neurips/lambdabeam/results
+neurips/plots
 
 
 /outputs/all_inventions/
