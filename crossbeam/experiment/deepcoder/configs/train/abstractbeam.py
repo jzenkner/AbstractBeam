@@ -23,7 +23,7 @@ def get_config():
   config.lambda_fraction = 0.8 # Percentage of tasks that need to include a lambda
   config.shuffle_ops = True # Shuffle operations before running search
   config.abstraction_refinement = True
-  config.data_save_dir = "neurips/abstractbeam/ogdomain/data2" # Directory to save data
+  config.data_save_dir = "./neurips/abstractbeam/ogdomain/data2" # Directory to save data
   config.num_datagen_proc = 30 # Number of parallel processes
   config.data_gen_seed = 2 # Data Generation Seed (will be incremented every iteration automatically)
   config.num_searches = 300 # Number of searches that will be performed
@@ -55,8 +55,8 @@ def get_config():
   config.load_model = ''  # Leave empty
   config.steps_per_curr_stage = 10000 # Parameter from LambdaBeam, we dont use this
   config.schedule_type = 'uniform' # Schedule type for task ordering
-  config.json_results_file = "neurips/abstractbeam/ogdomain/results2/run_1.json" # File to save results
-  config.save_dir = "neurips/abstractbeam/ogdomain/models2" # Directory to save model
+  config.json_results_file = "./neurips/abstractbeam/ogdomain/results2/run_1.json" # File to save results
+  config.save_dir = "./neurips/abstractbeam/ogdomain/models2" # Directory to save model
 
   # Abstraction
   config.abstraction = True # Abstraction usage

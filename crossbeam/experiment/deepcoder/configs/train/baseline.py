@@ -23,7 +23,7 @@ def get_config():
   config.lambda_fraction = 0.8
   config.shuffle_ops = False
   config.abstraction_refinement = False
-  config.data_save_dir = "neurips/lambdabeam/ogdomain/data"
+  config.data_save_dir = "./neurips/lambdabeam/ogdomain/data"
   config.num_datagen_proc = 30
   config.data_gen_seed = 2
   config.num_searches = 300
@@ -54,8 +54,8 @@ def get_config():
   config.load_model = ''
   config.steps_per_curr_stage = 10000
   config.schedule_type = 'uniform'
-  config.json_results_file = "neurips/lambdabeam/ogdomain/results/run_1.json"
-  config.save_dir = "neurips/lambdabeam/ogdomain/models"
+  config.json_results_file = "./neurips/lambdabeam/ogdomain/results/run_1.json"
+  config.save_dir = "./neurips/lambdabeam/ogdomain/models"
 
   # Abstraction
   config.abstraction = False

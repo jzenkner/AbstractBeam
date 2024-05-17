@@ -23,7 +23,7 @@ def get_config():
   config.lambda_skip_probability = 0.0
   config.lambda_fraction = 0.8
   config.shuffle_ops = False
-  config.data_save_dir = "../neurips/lambdabeam/eval/data2"
+  config.data_save_dir = "./neurips/lambdabeam/eval/data2"
   config.num_datagen_proc = 35
   config.data_gen_seed = 0
   config.num_searches = 350
@@ -57,8 +57,8 @@ def get_config():
   config.load_model = ''
   config.steps_per_curr_stage = 5000
   config.schedule_type = 'uniform'
-  config.json_results_file = "../neurips/lambdabeam/eval/fold2/results1.json"
-  config.save_dir = "../neurips/lambdabeam/models2"
+  config.json_results_file = "./neurips/lambdabeam/eval/fold2/results1.json"
+  config.save_dir = "./neurips/lambdabeam/models2"
 
   # Abstraction
   config.abstraction = True
