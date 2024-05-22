@@ -9,7 +9,7 @@ policy for bottom-up execution-guided program synthesis and extend it using DSL 
 
 ## Setup
 Make sure to install pytorch and pytorch-scatter.
-We used torch==2.2.1 and torch-scatter==2.1.2.
+We used torch==2.2.1 and torch-scatter==2.1.2 and python=3.8.19.
 Then install the packages in the requirements file, e.g.:
 ```
 pip install -r requirements.txt
