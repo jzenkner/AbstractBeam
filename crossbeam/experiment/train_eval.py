@@ -288,6 +288,7 @@ def train_eval_loop(args, device, model, trace_gen, checkpoint, original_tasks):
         # Evaluation
         if cur_step > starting_step:
             print('eval at step %d' % cur_step)
+            model.to(device)
             succ, json_dict = eval_func(original_tasks, domain, model, verbose=False, inventions=inventions)
 
             json_dict["num_operations"] = len(domain.operations)

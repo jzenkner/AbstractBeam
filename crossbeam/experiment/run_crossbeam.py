@@ -50,7 +50,8 @@ flags.DEFINE_bool('random_beam', False, 'replace beam search with random choices
 flags.DEFINE_float('restarts_timeout', None, 'Timeout per random restart')
 flags.DEFINE_float('temperature', 1.0, 'Temperature for sampling or UR evaluation')
 flags.DEFINE_bool('synthetic_test_tasks', False, 'Use synthetic or handwritten test tasks.')
-
+flags.DEFINE_integer('fold', 1, 'Fold')
+flags.DEFINE_integer('run', 1, 'Run')
 
 def init_model(args, domain, model_type, ckpt_inventions=[]):
     """Initializes the model."""
@@ -108,6 +109,11 @@ def main(argv):
         config = configs_all.get_config()
         config.update(FLAGS.config)  # get_config()
         proc_args = config
+        ds = "synthetic" if FLAGS.synthetic_test_tasks else "handwritten"
+        config.json_results_file = config.json_results_file + f"fold{FLAGS.fold}/result{FLAGS.run}_{ds}.json"
+        if FLAGS.fold == 2:
+            config.save_dir = config.save_dir + f"{FLAGS.fold}"
+            config.data_save_dir = config.data_save_dir + f"{FLAGS.fold}"
 
     logging.info(proc_args)
     set_global_seed(config.seed)
@@ -144,9 +150,17 @@ def main(argv):
             with open(repo_dir + "/crossbeam/data/dreamcoder/dreamcoder_train_tasks.pkl", 'rb') as file:
                 original_tasks = pickle.load(file)
     elif config.domain == "deepcoder":
-        original_tasks = deepcoder_tasks.HANDWRITTEN_TASKS
-        test_set, train_set = train_test_split(original_tasks, test_size=0.5, train_size=0.5, shuffle=True,
-                                               random_state=42)
+        original_tasks = deepcoder_tasks.SYNTHETIC_TASKS if FLAGS.synthetic_test_tasks else deepcoder_tasks.HANDWRITTEN_TASKS
+        if not FLAGS.synthetic_test_tasks:
+            if FLAGS.fold == 1:
+                train_set, test_set = train_test_split(original_tasks, test_size=0.5, train_size=0.5, shuffle=True,
+                                                   random_state=42)
+            if FLAGS.fold == 2:
+                test_set, train_set = train_test_split(original_tasks, test_size=0.5, train_size=0.5, shuffle=True,
+                                                       random_state=42)
+        else:
+            test_set = original_tasks
+
         # test_set = original_tasks
         if config.do_test:
             original_tasks = test_set

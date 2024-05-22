@@ -36,12 +36,12 @@ def get_config():
   config.value_encoder = 'lambda_signature'
   config.grad_accumulate = 4
   config.beam_size = 10
-  config.num_proc = 3
-  config.gpu_list = '0, 1, 2'
+  config.num_proc = 2
+  config.gpu_list = '0, 1'
   config.gpu = 1
   config.embed_dim = 128
   config.eval_every = 10000
-  config.port = '12121'
+  config.port = '44444'
   config.use_ur = False
   config.do_test = False
   config.timeout = 200
@@ -54,7 +54,7 @@ def get_config():
   config.load_model = ''
   config.steps_per_curr_stage = 10000
   config.schedule_type = 'uniform'
-  config.json_results_file = "./neurips/lambdabeam/ogdomain/results/run_1.json"
+  config.json_results_file = "./neurips/lambdabeam/ogdomain/result/"
   config.save_dir = "./neurips/lambdabeam/ogdomain/models"
 
   # Abstraction

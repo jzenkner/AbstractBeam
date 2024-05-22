@@ -21,7 +21,7 @@ def get_config():
   config.lambda_skip_probability = 0.0
   config.lambda_fraction = 0.8
   config.shuffle_ops = False
-  config.data_save_dir = "./neurips/abstractbeam/eval/data2"
+  config.data_save_dir = "./neurips/abstractbeam/eval/data"
   config.num_datagen_proc = 35
   config.data_gen_seed = 0
   config.num_searches = 350
@@ -40,7 +40,7 @@ def get_config():
   config.embed_dim = 128
   config.eval_every = 10000
   config.num_valid = 76
-  config.port = '77777'
+  config.port = '42424'
   config.use_ur = True
   config.do_test = True
   config.timeout = 100
@@ -55,8 +55,8 @@ def get_config():
   config.load_model = ''
   config.steps_per_curr_stage = 5000
   config.schedule_type = 'uniform'
-  config.json_results_file = "./neurips/abstractbeam/eval/fold2/results1.json"
-  config.save_dir = "./neurips/abstractbeam/ogdomain/models2"
+  config.json_results_file = "./neurips/abstractbeam/eval/"
+  config.save_dir = "./neurips/abstractbeam/models"
 
   # Abstraction
   config.abstraction = True
