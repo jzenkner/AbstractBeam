@@ -19,7 +19,7 @@ pip install -r requirements.txt
 The synthetic training data is saved to  `./neurips/abstractbeam/data` and  `./neurips/lambdabeam/data`.
 Make sure to also create `./neurips/abstractbeam/models` and `./neurips/abstractbeam/results` directories. Same goes when you want to train the LambdaBeam benchmark.
 
-## Train the model
+## Train or eval the model
 Navigate to `crossbeam/experiment/deepcoder` directory, and select the config you want to run.
 Just adapt the config path to point to `./crossbeam/experiment/deepcoder/configs/` + [`train/abstractbeam.py`, `train/baseline.py`, `eval/abstractbeam_eval.py`, `eval/lambdabeam_eval.py`].
 You can make any necessary edits to the selected config file including the data, model, and result directories.
