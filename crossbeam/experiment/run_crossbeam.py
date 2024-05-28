@@ -36,7 +36,7 @@ from crossbeam.model.joint_model import JointModel, IntJointModel
 from crossbeam.model.logic_model import LogicModel
 from crossbeam.model.deepcoder_model import DeepCoderModel
 from crossbeam.model.util import CharacterTable
-from crossbeam.experiment.dreamcoder.configs.train.baseline import get_config
+
 
 FLAGS = flags.FLAGS
 config_flags.DEFINE_config_file(
