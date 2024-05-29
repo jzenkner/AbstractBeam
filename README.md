@@ -1,6 +1,6 @@
 # AbstractBeam: Enhancing Bottom-Up Program Synthesis using Library Learning
 
-This repository contains the source code associated with the paper submited to NeurIPS 2024:
+This repository contains the source code associated with the [paper](https://arxiv.org/abs/2405.17514) submited to NeurIPS 2024 :
 
 In this research project, we aim to reduce the search space blowup in Program Synthesis. For this purpose, we train a neural model to learn a search
 policy for bottom-up execution-guided program synthesis and extend it using DSL Enhancement.
