@@ -1,6 +1,6 @@
----
-AbstractBeam: Enhancing Bottom-Up Program Synthesis Using Library Learning
----
+
+# AbstractBeam: Enhancing Bottom-Up Program Synthesis Using Library Learning
+
 
 This repository contains the source code associated with the [paper](https://arxiv.org/abs/2405.17514) submited to NeurIPS 2024 :
 
