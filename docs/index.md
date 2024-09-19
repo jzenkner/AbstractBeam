@@ -1,8 +1,15 @@
 
 # AbstractBeam: Enhancing Bottom-Up Program Synthesis Using Library Learning
 
+## Abstract
+LambdaBeam is an execution-guided algorithm for program synthesis that efficiently generates programs using higher-order functions, lambda functions, and iterative loops within a Domain-Specific Language (DSL). However, it does not capitalize on recurring program blocks commonly found in domains like list traversal. 
 
-This repository contains the source code associated with the [paper](https://arxiv.org/abs/2405.17514) submited to NeurIPS 2024 :
+To address this, *AbstractBeam* introduces *Library Learning*, which identifies and integrates recurring program structures into the DSL, optimizing the synthesis process. Experimental results show AbstractBeam significantly outperforms LambdaBeam in terms of task completion and efficiency, reducing the number of candidate programs and time required for synthesis. Library Learning proves beneficial even in domains not explicitly designed for it, demonstrating its broad applicability.
+
+Together, these advancements showcase how AbstractBeam leverages Library Learning to improve upon traditional synthesis methods, balancing the strengths of execution-guided search and reusable code abstractions.
+
+
+This repository contains the source code associated with this [preprint](https://arxiv.org/abs/2405.17514):
 
 In this research project, we aim to reduce the search space blowup in Program Synthesis. For this purpose, we train a neural model to learn a search
 policy for bottom-up execution-guided program synthesis and extend it using DSL Enhancement.
