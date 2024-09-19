@@ -1,7 +1,7 @@
 
 # AbstractBeam: Enhancing Bottom-Up Program Synthesis Using Library Learning
-![Traget](./images/tower_task_102.png)
-![Animation of Construction Process](./images/tower_construction.gif)
+![Traget](./tower_task_102_44.png)
+![Animation of Construction Process](./tower_construction.gif)
 ## Abstract
 LambdaBeam is an execution-guided algorithm for program synthesis that efficiently generates programs using higher-order functions, lambda functions, and iterative loops within a Domain-Specific Language (DSL). However, it does not capitalize on recurring program blocks commonly found in domains like list traversal. 
 
