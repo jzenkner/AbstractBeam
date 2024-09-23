@@ -63,7 +63,15 @@ A major challenge in program synthesis is the **exploding search space**, which 
 <table align="center">
   <tr>
     <td style="height:30%;  width:30%;" align="center"> 
-      <img style="display:block;" width="50%" height="50%" src="time_barplot.pdf" alt="Search Tree with depth=4">
+      <img style="display:block;" width="50%" height="50%" src="./programlength.svg" alt="Search Tree with depth=4">
+      <div style="text-align: center;"></div>
+    </td>
+    <td style="height:30%;  width:30%;" align="center"> 
+      <img style="display:block;" width="50%" height="50%" src="./abstractionusage.svg" alt="Search Tree with depth=4">
+      <div style="text-align: center;"></div>
+    </td>
+    <td style="height:30%;  width:30%;" align="center"> 
+      <img style="display:block;" width="50%" height="50%" src="./time_barplot.svg" alt="Search Tree with depth=4">
       <div style="text-align: center;"></div>
     </td>
   </tr>
