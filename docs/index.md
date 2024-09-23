@@ -10,6 +10,10 @@
       <img src="./tower_construction.gif" alt="Animation of Construction Process" style="display: block; margin: auto;">
       <div style="text-align: center;">Animation of Construction Process</div>
     </td>
+    <td style="text-align: center; border: none;">
+      <img src="./searchtree.png" alt="Search Tree with depth=4" style="display: block; margin: auto;">
+      <div style="text-align: center;">Search Tree with depth=4</div>
+    </td>
   </tr>
 </table>
 
