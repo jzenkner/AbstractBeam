@@ -1,28 +1,28 @@
 # AbstractBeam: Enhancing Bottom-Up Program Synthesis using Library Learning
 
-
+<a href="https://arxiv.org/abs/2405.17514" class="button">&#128214; Full Paper</a>
+<a href="https://github.com/jzenkner/AbstractBeam" class="button" >&#128190; Github Repo</a>
 
 <table align="center">
   <tr>
-    <td style="height:30%;  width:30%;" align="center"> 
+    <!-- Target Image Column -->
+    <td style="height:30%; width:30%;" align="center"> 
       <img style="display:block;" width="100%" height="100%" src="./tower_task_102_44.png" alt="Target">
       <div style="text-align: center;">Target</div>
     </td>
+    <!-- Generated Construction Program -->
     <td style="height:30%; width:30%; overflow:auto;"> 
-        </br>
-  </br>
-    </br>
-       <pre lang="lisp">
+      <pre lang="lisp" style="white-space: pre-wrap;">
 (lambda (loopM 6 (lambda (lambda (loopM $1 
 (lambda (lambda (embedTower (lambda (1x3 
 (right 4 (1x3 (left 2 (3x1 $0)))))) $0)))
 (left 6 $0)))) $0))
-       </pre>
-      </br>
-  </br>
-  <div style="text-align: center;">Generated Construction Program</div>
-    <td style="height:30%;  width:30%;" align="center"> 
-     <img style="display:block;" width="100%" height="100%" src="./tower_construction.gif" alt="Animation of Construction Process">
+      </pre>
+      <div style="text-align: center;">Generated Construction Program</div>
+    </td>
+    <!-- Animation of Construction Process -->
+    <td style="height:30%; width:30%;" align="center"> 
+      <img style="display:block;" width="100%" height="100%" src="./tower_construction.gif" alt="Animation of Construction Process">
       <div style="text-align: center;">Animation of Construction Process</div>
     </td>
   </tr>
