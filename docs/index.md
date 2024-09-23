@@ -63,17 +63,21 @@ A major challenge in program synthesis is the **exploding search space**, which 
 <table align="center">
   <tr>
     <td style="height:30%;  width:30%;" align="center"> 
-      <img style="display:block;" width="50%" height="50%" src="./programlength.svg" alt="Search Tree with depth=4">
+      <img style="display:block;" width="100%" height="100%" src="./programlength.svg" alt="Search Tree with depth=4">
       <div style="text-align: center;"></div>
     </td>
     <td style="height:30%;  width:30%;" align="center"> 
-      <img style="display:block;" width="50%" height="50%" src="./abstractionusage.svg" alt="Search Tree with depth=4">
+      <img style="display:block;" width="100%" height="100%" src="./abstractionusage.svg" alt="Search Tree with depth=4">
       <div style="text-align: center;"></div>
     </td>
     <td style="height:30%;  width:30%;" align="center"> 
-      <img style="display:block;" width="50%" height="50%" src="./time_barplot.svg" alt="Search Tree with depth=4">
+      <img style="display:block;" width="100%" height="100%" src="./time_barplot.svg" alt="Search Tree with depth=4">
       <div style="text-align: center;"></div>
     </td>
   </tr>
 </table>
+
+LambdaBeam solved 50.2% ± 2.0% of handwritten test tasks on the first fold and 36.0% ± 2.5% on the second fold. AbstractBeam did better, with success rates of 53.6% ± 2.3% and 39.6% ± 1.5% on the first and second folds, respectively, showing a statistically significant improvement (p < 0.05). This supports the idea that Library Learning helps LambdaBeam perform better, especially on tasks that involve abstractions. Interestingly, the performance difference between the two methods was only noticeable when program solutions used abstractions. When there weren’t any or only a few abstractions, both methods performed similarly.
+
+On the efficiency side, AbstractBeam was faster. It took an average of 2.57 seconds ± 5.58 seconds to solve tasks, while LambdaBeam needed 4.57 seconds ± 7.07 seconds. This speed boost comes from AbstractBeam's ability to reduce the search space by using abstractions, which not only helped it solve more tasks but also required less time and fewer candidate programs. Even though both methods had the same timeout, AbstractBeam still processed fewer programs because the abstractions made its search process more efficient. However, there’s a balance to be struck — adding too many unused abstractions to the DSL can bloat it and cancel out the benefits. So, managing the DSL thoughtfully is key to keeping the performance gains intact.
 
