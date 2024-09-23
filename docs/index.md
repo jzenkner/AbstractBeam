@@ -3,15 +3,15 @@
 <table align="center" border="0" cellspacing="0" cellpadding="0" style="width: 100%;">
   <tr>
     <td style="text-align: center; border: none; width: 33%;">
-      <img src="./tower_task_102_44.png" alt="Target" style="display: block; margin: auto; max-width: 100%;">
+      <img src="./tower_task_102_44.png" alt="Target" style="display: block; margin: auto; width: 100%; height: auto;">
       <div style="text-align: center;">Target</div>
     </td>
     <td style="text-align: center; border: none; width: 33%;">
-      <img src="./tower_construction.gif" alt="Animation of Construction Process" style="display: block; margin: auto; max-width: 100%;">
+      <img src="./tower_construction.gif" alt="Animation of Construction Process" style="display: block; margin: auto; width: 100%; height: auto;">
       <div style="text-align: center;">Animation of Construction Process</div>
     </td>
     <td style="text-align: center; border: none; width: 33%;">
-      <img src="./searchtree.png" alt="Search Tree with depth=4" style="display: block; margin: auto; max-width: 100%;">
+      <img src="./searchtree.png" alt="Search Tree with depth=4" style="display: block; margin: auto; width: 100%; height: auto;">
       <div style="text-align: center;">Search Tree with depth=4</div>
     </td>
   </tr>
