@@ -1,7 +1,6 @@
 # AbstractBeam: Enhancing Bottom-Up Program Synthesis using Library Learning
 
-<a href="https://arxiv.org/abs/2405.17514" class="button">&#128214; Full Paper</a>
-<a href="https://github.com/jzenkner/AbstractBeam" class="button" >&#128190; Github Repo</a>
+
 
 <table align="center">
   <tr>
